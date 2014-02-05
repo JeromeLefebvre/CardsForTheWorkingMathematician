@@ -1,4 +1,3 @@
-
 class card(object):
 	''' The card object is an object that holds a rank and a suite
 	the suited is sorted as:
