@@ -51,11 +51,16 @@ class card(object):
 		'''A getter for the suite of the card '''
 		return self._suite
 
-	
+	@classmethod
+	def cardCompare(cls, aCard, withSuites = False):
+		if withSuites:
+			return aCard.rank(), aCard.suite()
+		else:
+			return aCard.rank()
+
 	def _compare(self, other, method, withSuites= False):
 		try:
 			if withSuites:
-				#return "??"
 				return method(self.rank(), other.rank()) and method(self.suite(), other.suite())
 			else:
 				return method(self.rank(), other.rank())
@@ -125,16 +130,30 @@ Queen of Spades
 	@classmethod
 	def ranks_name(cls,rank):
 		return card._ranks[rank]
-import unittest
 
+import unittest
 class TestHand(unittest.TestCase):
 	def setup(self):
 		pass
+
+	def test_sort(self):
+		self.assertEqual( sorted([card('Q'), card('J'), card('10')]) , [card('10'), card('J'), card('Q')])
+		one = card('1', 'H')
+		two = card('2', 'S')
+		self.assertEqual( sorted([two,one]), [one,two])
+		oneH = card('1', 'H')
+		oneS = card('1', 'S')
+		oneC = card('1', 'C')
+		oneD = card('1', 'D')
+		self.assertEqual( sorted( [oneH, oneS], key= lambda x: (x.rank(), x.suite()) ), [oneS, oneH] )
+		self.assertEqual( sorted( [oneH, oneS, oneC, oneD], key= lambda x: card.cardCompare(x,withSuites=True)), [oneC, oneD, oneH, oneS] )
 
 	def test_compare(self):
 		self.assertTrue( card('K') > card('Q'))
 		self.assertTrue( card('K') > card('J'))
 		self.assertTrue( card('5') < 6)
+		self.assertTrue( card('5') <= 6)
+		self.assertFalse( card('5') >= 6)
 
 	def test_equality(self):
 		self.assertEqual( card('K') , card('K'))
