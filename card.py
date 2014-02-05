@@ -1,5 +1,5 @@
 class card(object):
-	''' The card object (this is crazy) is an object that holds a rank and a suite
+	''' The card object is an object that holds a rank and a suite
 	the suited is sorted as:
 	clubs = 0, diamonds = 1, hearts = 2, spades = 3
 	the ranks are:
