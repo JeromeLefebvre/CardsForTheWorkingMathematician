@@ -10,7 +10,7 @@ class card(object):
 	# Since values are unique, it is nice to look them the other way around
 	_suites_reverse = {'Spades': 3, 'Clubs': 0, 'Diamonds': 1, 'Hearts': 2, 'S':3, 'C': 0, 'D':1, 'H':2}
 	_ranks = {0: 'Ace', 1: '2', 2: '3', 3: '4', 4: '5',5: '6',6: '7', 7: '8', 8: '9', 9:'10', 10:'Jack', 11:'Queen', 12:'King'}
-	_ranks_reverse = {'Ace': 0, '10': 10, 'Jack': 11, 'King': 13, '6': 6, '7': 7, '4': 4, '5': 5, '2': 2, '3': 3, '1': 1, 'Queen': 12, '8': 8, '9': 9, 'A':0, 'Q':12, 'J': 11, 'K': 13}
+	_ranks_reverse = {'Ace': 0, '10': 9, 'Jack': 10, 'King': 12, '6': 5, '7': 6, '4': 3, '5': 4, '2': 1, '3': 2, 'Queen': 11, '8': 7, '9': 8, 'A':0, 'Q':11, 'J': 10, 'K': 12}
 
 	def __init__(self,rank=None,suite=None):
 		# if you don't specify a rank, pick one at random
@@ -138,16 +138,16 @@ class TestHand(unittest.TestCase):
 
 	def test_sort(self):
 		self.assertEqual( sorted([card('Q'), card('J'), card('10')]) , [card('10'), card('J'), card('Q')])
-		one = card('1', 'H')
-		two = card('2', 'S')
+		one = card('3', 'H')
+		two = card('4', 'S')
 		self.assertEqual( sorted([two,one]), [one,two])
 		one = card(1, 'H')
 		two = card(2, 'S')
 		self.assertEqual( sorted([two,one]), [one,two])		
-		oneH = card('1', 'H')
-		oneS = card('1', 'S')
-		oneC = card('1', 'C')
-		oneD = card('1', 'D')
+		oneH = card('2', 'H')
+		oneS = card('2', 'S')
+		oneC = card('2', 'C')
+		oneD = card('2', 'D')
 		self.assertEqual( sorted( [oneH, oneS], key= lambda x: (x.rank(), x.suite()) ), [oneS, oneH] )
 		self.assertEqual( sorted( [oneH, oneS, oneC, oneD], key= lambda x: card.cardCompare(x,withSuites=True)), [oneC, oneD, oneH, oneS] )
 
