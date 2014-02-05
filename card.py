@@ -151,6 +151,7 @@ class TestHand(unittest.TestCase):
 		self.assertEqual( sorted( [oneH, oneS], key= lambda x: (x.rank(), x.suite()) ), [oneS, oneH] )
 		self.assertEqual( sorted( [oneH, oneS, oneC, oneD], key= lambda x: card.cardCompare(x,withSuites=True)), [oneC, oneD, oneH, oneS] )
 
+		
 	def test_compare(self):
 		self.assertTrue( card('K') > card('Q'))
 		self.assertTrue( card('K') > card('J'))
