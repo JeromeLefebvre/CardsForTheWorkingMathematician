@@ -9,7 +9,7 @@ class card(object):
 	_suites = {0:'Clubs', 1:'Diamonds', 2:'Hearts',3:'Spades'}
 	# Since values are unique, it is nice to look them the other way around
 	_suites_reverse = {'Spades': 3, 'Clubs': 0, 'Diamonds': 1, 'Hearts': 2, 'S':3, 'C': 0, 'D':1, 'H':2}
-	_ranks = {0: 'Ace', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10:'10', 11:'Jack', 12:'Queen', 13:'King'}
+	_ranks = {0: 'Ace', 1: '2', 2: '3', 3: '4', 4: '5',5: '6',6: '7', 7: '8', 8: '9', 9:'10', 10:'Jack', 11:'Queen', 12:'King'}
 	_ranks_reverse = {'Ace': 0, '10': 10, 'Jack': 11, 'King': 13, '6': 6, '7': 7, '4': 4, '5': 5, '2': 2, '3': 3, '1': 1, 'Queen': 12, '8': 8, '9': 9, 'A':0, 'Q':12, 'J': 11, 'K': 13}
 
 	def __init__(self,rank=None,suite=None):
@@ -141,6 +141,9 @@ class TestHand(unittest.TestCase):
 		one = card('1', 'H')
 		two = card('2', 'S')
 		self.assertEqual( sorted([two,one]), [one,two])
+		one = card(1, 'H')
+		two = card(2, 'S')
+		self.assertEqual( sorted([two,one]), [one,two])		
 		oneH = card('1', 'H')
 		oneS = card('1', 'S')
 		oneC = card('1', 'C')
