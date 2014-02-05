@@ -19,11 +19,11 @@ class card(object):
 			from random import randint
 			self._rank = randint(0,13)
 		else:
-			if type(rank) == type(0):
+			if isinstance(rank, int):
 				# raises an AssertionError if not within the accepted range
 				assert( 0 <= rank <= 13)
 				self._rank = rank
-			elif type(rank) == type(""):
+			elif isinstance(rank, str):
 				assert( rank in [ key for key in card._ranks_reverse ] )
 				self._rank = card._ranks_reverse[rank]
 			else:
@@ -33,11 +33,11 @@ class card(object):
 			from random import randint
 			self._suite = randint(0,3)
 		else:
-			if type(suite) == type(0):
+			if isinstance(suite, int):
 				# raises an AssertionError if not within the accepted range
 				assert( 0 <= suite <= 3)
 				self._suite = suite
-			elif type(suite) == type(""):
+			elif isinstance(suite, str):
 				assert( suite in [ key for key in card._suites_reverse ] )
 				self._suite = card._suites_reverse[suite]
 			else:
@@ -52,55 +52,80 @@ class card(object):
 		'''A getter for the suite of the card '''
 		return self._suite
 
+	
+	def _compare(self, other, method, withSuites= False):
+		try:
+			if withSuites:
+				#return "??"
+				return method(self.rank(), other.rank()) and method(self.suite(), other.suite())
+			else:
+				return method(self.rank(), other.rank())
+		except AttributeError:
+			pass
+		# We can't compare those two objects
+		# Can't figure out how to output the same thing as python:
+		# >>> 5 < []
+		# Traceback (most recent call last):
+  		#	File "<stdin>", line 1, in <module>
+		# TypeError: unorderable types: int() < list()
+		# So I have this custom message
+		raise TypeError("unorderable types:" + str(type(other)) + " " + str(type(self)))
+			
 	def __eq__(self, other):
 		# Must compare against a card
-		if type(other) != type(self):
+		if not isinstance(other,card):
 			return False
-		return self.rank() == other.rank() # self.suite() == other.suite() ?
+		return self._compare(other, lambda x,y: x == y)
 
 	def __ne__(self,other):
-		assert(type(self) == type(other))
-		return self.rank() == other.rank()
+		if not isinstance(other,card):
+			return True
+		return self._compare(other, lambda x,y: x != y)
 
 	def __gt__(self,other):
-		if type(other) not in (type(self), type(0)):
-			raise TypeError("unorderable types")
-		if type(other) == type(self):
-			return self.rank() > other.rank()
-		elif type(ohter) == type(0):
-			return self.rank() > other
+		if isinstance(other, card):
+			return self._compare(other, lambda x,y: x > y)
+		elif isinstance(other, int):
+			return self > card(other)
 
 	def __ge__(self,other):
-		if type(other) not in (type(self), type(0)):
-			raise TypeError("unorderable types")
-		if type(other) == type(self):
-			return self.rank() >= other.rank()
-		elif type(ohter) == type(0):
-			return self.rank() >= other
+		if isinstance(other, card):
+			return self._compare(other, lambda x,y: x >= y)
+		elif isinstance(other, int):
+			return self >= card(other)
 
 	def __lt__(self,other):
-		if type(other) not in (type(self), type(0)):
-			raise TypeError("unorderable types")
-		if type(other) == type(self):
-			return self.rank() < other.rank()
-		elif type(ohter) == type(0):
-			return self.rank() < other
+		if isinstance(other, card):
+			return self._compare(other, lambda x,y: x < y)
+		elif isinstance(other, int):
+			return self < card(other)
 
 	def __le__(self,other):
-		if type(other) not in (type(self), type(0)):
-			raise TypeError("unorderable types")
-		if type(other) == type(self):
-			return self.rank() <= other.rank()
-		elif type(ohter) == type(0):
-			return self.rank() <= other
+		if isinstance(other, card):
+			return self._compare(other, lambda x,y: x <= y)
+		elif isinstance(other, int):
+			return self <= card(other)
 
 	def __str__(self):
+		''' Used with the print function
+		>>> print(card('Q'))
+Queen of Hearts
+		'''
+		return str(self._ranks[self._rank]) + " of " + str(self._suites[self._suite])
+
+	def __repr__(self):
+		'''>>> card('Q')
+Queen of Spades
+		'''
 		return str(self._ranks[self._rank]) + " of " + str(self._suites[self._suite])
 
 	@classmethod
 	def suites_name(cls,suite):
 		return card._suites[suite]
 
+	@classmethod
+	def ranks_name(cls,rank):
+		return card._ranks[rank]
 import unittest
 
 class TestHand(unittest.TestCase):
@@ -110,7 +135,13 @@ class TestHand(unittest.TestCase):
 	def test_compare(self):
 		self.assertTrue( card('K') > card('Q'))
 		self.assertTrue( card('K') > card('J'))
+		self.assertTrue( card('5') < 6)
+
+	def test_equality(self):
 		self.assertEqual( card('K') , card('K'))
+		self.assertFalse( card('K') == 5 )
+		self.assertTrue( card() != 5 )
+		self.assertEqual( card('Q'), card('Q'))
 
 	def test_creation(self):
 		# Verify that I can't create a card made of Junk
@@ -123,6 +154,6 @@ class TestHand(unittest.TestCase):
 
 	def test_classMethod(self):
 		self.assertEqual(card.suites_name(2),'Hearts')
-
+	
 if __name__ == "__main__":
 	unittest.main()
