@@ -151,7 +151,16 @@ class TestHand(unittest.TestCase):
 		self.assertEqual( sorted( [oneH, oneS], key= lambda x: (x.rank(), x.suite()) ), [oneS, oneH] )
 		self.assertEqual( sorted( [oneH, oneS, oneC, oneD], key= lambda x: card.cardCompare(x,withSuites=True)), [oneC, oneD, oneH, oneS] )
 
-		
+		K = card('K')
+		A = card('A')
+		self.assertEqual( sorted( [K, A], key= lambda x: card.cardCompare(x,withSuites=True)), [A,K] )
+		def aceWorthElven(x):
+			if x.rank() == 0:
+				return 11
+			else:
+				return x.rank()
+		two = card('2')
+		self.assertEqual( sorted( [A,two], key= aceWorthElven), [two,A] )
 	def test_compare(self):
 		self.assertTrue( card('K') > card('Q'))
 		self.assertTrue( card('K') > card('J'))
