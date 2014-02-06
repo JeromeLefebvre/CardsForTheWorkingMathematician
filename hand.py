@@ -69,9 +69,6 @@ class Hand(object):
             elif not playerHand.isBlackJack() and dealerHand.isBlackJack():
                 return -1
 
-
-
-
     def _compare(self, other, method):
         ''' _compare(Hand, function) -> bool -- compares two hands of blackjack'''
         try:
@@ -85,7 +82,6 @@ class Hand(object):
             return method(maxself, maxother)
         except AttributeError:
             pass
-
 
     def __eq__(self, other):
         # Must compare against a Hand
@@ -183,6 +179,6 @@ class TestHand(unittest.TestCase):
         playerHand = Hand([Card('Q'),Card('A')])
         dealerHand = Hand([Card('10'),Card('A')])
         self.assertEqual( Hand.compare(playerHand,dealerHand), 0) 
-        
+
 if __name__ == "__main__":
     unittest.main()
