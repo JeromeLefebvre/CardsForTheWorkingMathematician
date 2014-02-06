@@ -13,7 +13,7 @@
 decks of 52 cards.
 '''
 from card import card
-from random import randrange
+from random import shuffle
 
 class deck:
     def __init__(self, size=8):
@@ -35,7 +35,6 @@ class deck:
         return len(self._cards)
 
     def shuffle(self):
-        from random import shuffle
         shuffle(self._cards)
 
 def main():
