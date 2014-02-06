@@ -43,6 +43,12 @@ class Hand(object):
             total=[-1]
         return total
 
+    def split(self):
+        ''' split() -> hand -- returns a new hand containing half of the pair that is currently in the hand '''
+        assert(self.isPair())
+        newHand = Hand(self._cards.pop())
+        return newHand
+
     def _compare(self, other, method):
         ''' _compare(Hand, function) -> bool -- compares two hands of blackjack'''
         try:
@@ -124,6 +130,16 @@ class TestHand(unittest.TestCase):
         hand.receive(Card('K'))
         self.assertFalse(hand.isPair())
         self.assertTrue(hand.isBusted())
+
+    def test_slit(self):
+        hand = Hand([Card('K','H'),Card('K','D')])
+        newHand = hand.split()
+        self.assertEqual(newHand._cards, [Card('K','D')])
+        self.assertEqual(hand._cards, [Card('K','H')])
+
+        hand = Hand([Card('Q','H'),Card('K','D')])
+
+        self.assertRaises(AssertionError, hand.split)
 
 if __name__ == "__main__":
     unittest.main()
