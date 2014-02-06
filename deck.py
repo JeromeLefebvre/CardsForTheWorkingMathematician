@@ -13,7 +13,7 @@
 decks of 52 cards.
 '''
 from card import card
-from random import randrange
+from random import randrange, shuffle
 
 class deck:
     def __init__(self, size=8):
@@ -35,13 +35,21 @@ class deck:
         return len(self._cards)
 
     def shuffle(self):
-        from random import shuffle
         shuffle(self._cards)
 
-def main():
-    pass
+import unittest
+class TestHand(unittest.TestCase):
+    def setup(self):
+        pass
+
+    def test_basic(self):
+        self.dealerdeck = deck(2)
+        self.assertEqual(self.dealerdeck.cardsLeft(), 52*2)
+        self.dealerdeck.pop()
+        self.assertEqual(self.dealerdeck.cardsLeft(), 52*2 - 1)
 
 if __name__ == '__main__':
+    unittest.main()
     d = deck()
     d.shuffle()
     print (d.pop())
