@@ -1,12 +1,11 @@
 #-------------------------------------------------------------------------------
-# Name:        module1
+# Name:        deck.py
 # Purpose:
 #
 # Author:      marioga
 #
 # Created:     05/02/2014
 # Copyright:   (c) marioga 2014
-# Licence:     <your licence>
 #-------------------------------------------------------------------------------
 
 ''' This is the implementation of the deck class. A "deck" consists of _size
@@ -18,7 +17,7 @@ import unittest
 from card import Card
 
 
-class Deck:
+class Deck(object):
     def __init__(self, size=8):
         try:
             self._size = int(size)

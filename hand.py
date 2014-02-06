@@ -1,6 +1,6 @@
 from card import Card
 
-class Hand():
+class Hand(object):
     def __init__(self,cards=[]):
         if isinstance(cards,Card):
             self._cards = [cards]
@@ -11,6 +11,11 @@ class Hand():
         ''' receive(Card) -> None -- add a single card to the current hand '''
         assert(isinstance(newCard,Card))
         self._cards.append(newCard)
+
+    def displayCards(self):
+        ''' Prints the content of the hand '''
+        for card in self._cards:
+            print (card)
 
     def isBusted(self):
         ''' isBusted() -> bool -- returns if the hand is under 21 points for a choice value of aces '''
@@ -104,6 +109,7 @@ class TestHand(unittest.TestCase):
         self.playerhand = Hand(Card('K'))
         self.dealerhand = Hand(Card('K'))
         self.assertTrue(self.playerhand ==  self.dealerhand)
+
 
 if __name__ == "__main__":
     unittest.main()

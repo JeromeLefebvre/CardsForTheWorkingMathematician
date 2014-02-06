@@ -1,29 +1,51 @@
 #-------------------------------------------------------------------------------
-# Name:        module1
+# Name:        player.py
 # Purpose:
 #
 # Author:      marioga
 #
 # Created:     05/02/2014
 # Copyright:   (c) marioga 2014
-# Licence:     <your licence>
 #-------------------------------------------------------------------------------
 
-# from hand import hand
+from card import Card
+from hand import Hand
 
-class Player:
-    def __init__(self,hand=None,money=0):
-        self._hand=hand
+class Player(object):
+    def __init__(self, hand=None, money=0, name = "Stranger"):
+        if isinstance(hand,Hand):
+            self._hand=hand
         try:
             self._money=int(money)
         except ValueError:
             print ("Money is not an integer")
+        try:
+            self._name=str(name)
+        except:
+            print ("Name is not valid")
+
+    def hand(self):
+        '''Getter for _hand'''
+        return self._hand
+
+    def money(self):
+        '''Getter for _money'''
+        return self._money
+
+    def name(self):
+        '''Getter for _name'''
+        return self._name
 
     def displayHand(self):
-        # Print the contents in hand
-        pass
+        ''' Displays player's hand'''
+        self._hand.displayCards()
 
-    def bet(self,n):
+class NormalPlayer(Player):
+    def __init__(self, hand=None, money=0, name = "Stranger"):
+        Player.__init__(self, hand, money, name)
+
+    def updateAfterBet(self,n):
+        '''Updates player's money after betting and makes sure player has enough'''
         try:
             if self._money<int(n):
                 print("Not enough money")
@@ -32,16 +54,14 @@ class Player:
         except ValueError:
             print ("Bet is not an integer")
 
+    def hit(self):
+        pass
 
-
-
-
-
-
-
-
-def main():
-    pass
+class Dealer(Player):
+    def __init__(self, hand=None):
+        Player.__init__(self, hand, 0, "Dealer")
 
 if __name__ == '__main__':
-    main()
+    myplayer=NormalPlayer(Hand([Card('K'),Card('3')]))
+    myplayer.displayHand()
+
