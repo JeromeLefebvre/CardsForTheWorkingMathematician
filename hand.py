@@ -83,35 +83,39 @@ class TestHand(unittest.TestCase):
         pass
 
     def test_handValue(self):
-        self.playerhand = Hand([Card('K')])
-        self.assertEqual(self.playerhand.value(),[10])
-        self.playerhand.receive(Card('Q'))
-        self.assertEqual(self.playerhand.value(),[20])
-        self.playerhand.receive(Card('A'))
-        self.assertEqual(self.playerhand.value(),[21])
-        self.playerhand = Hand([Card('A'),Card('A')])
-        self.assertEqual(self.playerhand.value(),[2,12])
-        self.playerhand = Hand([Card('K')])
-        self.playerhand.receive(Card('A'))
-        self.assertEqual(self.playerhand.value(),[11,21])
+        playerhand = Hand([Card('K')])
+        self.assertEqual(playerhand.value(),[10])
+        playerhand.receive(Card('Q'))
+        self.assertEqual(playerhand.value(),[20])
+        playerhand.receive(Card('A'))
+        self.assertEqual(playerhand.value(),[21])
+
+        playerhand = Hand([Card('A'),Card('A')])
+        self.assertEqual(playerhand.value(),[2,12])
+        
+        playerhand = Hand([Card('K')])
+        playerhand.receive(Card('A'))
+        self.assertEqual(playerhand.value(),[11,21])
+
     def test_compare(self):
-        self.playerhand = Hand([Card('K')])
-        self.dealerhand = Hand([Card('K')])
-        self.assertTrue(self.playerhand ==  self.dealerhand)
-        self.playerhand.receive(Card('A'))
-        self.dealerhand = Hand(Card('9'))
-        self.assertTrue(self.playerhand >  self.dealerhand)
-        self.dealerhand = Hand(Card('2'))
+        playerhand = Hand([Card('K')])
+        dealerhand = Hand([Card('K')])
+        self.assertTrue(playerhand ==  dealerhand)
+        playerhand.receive(Card('A'))
+        dealerhand = Hand(Card('9'))
+        self.assertTrue(playerhand >  dealerhand)
+        dealerhand = Hand(Card('2'))
         # winning base on the blackjack rule
-        self.assertTrue(self.playerhand >  self.dealerhand)
+        self.assertTrue(playerhand.isBlackJack())
+        self.assertTrue(playerhand >  dealerhand)
 
-        self.playerhand = Hand([Card('K')])
-        self.dealerhand = Hand([Card('Q')])
-        self.assertTrue(self.playerhand ==  self.dealerhand)
-        self.playerhand = Hand(Card('K'))
-        self.dealerhand = Hand(Card('K'))
-        self.assertTrue(self.playerhand ==  self.dealerhand)
+        playerhand = Hand([Card('K')])
+        dealerhand = Hand([Card('Q')])
+        self.assertTrue(playerhand ==  dealerhand)
 
+    def test_handStates(self):
+        hand = Hand([Card('K'),Card('K'),Card('K')])
+        self.assertTrue(hand.isBusted())
 
 if __name__ == "__main__":
     unittest.main()
