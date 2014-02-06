@@ -43,11 +43,34 @@ class Hand(object):
             total=[-1]
         return total
 
+    def bestValue(self):
+        ''' bestValue() -> bool -- returns the best value for the hand '''
+        return max(self.value())
+
     def split(self):
         ''' split() -> hand -- returns a new hand containing half of the pair that is currently in the hand '''
         assert(self.isPair())
         newHand = Hand(self._cards.pop())
         return newHand
+
+    @classmethod
+    def compare(cls,playerHand,dealerHand):
+        ''' compare(hand,hand) -> int -- class method that compares two hands, 
+        returns 0 if the hands are a tie, -1 if dealer has a stronger hand, 1 if player has a stronger hand'''
+        if playerHand.bestValue() > dealerHand.bestValue():
+            return 1
+        elif playerHand.bestValue() < dealerHand.bestValue():
+            return -1
+        else:
+            if playerHand.bestValue() < 21 or (playerHand.isBlackJack() and dealerHand.isBlackJack()):
+                return 0
+            elif playerHand.isBlackJack() and not dealerHand.isBlackJack():
+                return 1
+            elif not playerHand.isBlackJack() and dealerHand.isBlackJack():
+                return -1
+
+
+
 
     def _compare(self, other, method):
         ''' _compare(Hand, function) -> bool -- compares two hands of blackjack'''
@@ -143,7 +166,23 @@ class TestHand(unittest.TestCase):
     def test_compare(self):
         playerHand = Hand([Card('K'),Card('K')])
         dealerHand = Hand([Card('9'),Card('J')])
+        self.assertEqual( Hand.compare(playerHand,dealerHand), 1)
 
+        playerHand = Hand([Card('K'),Card('K')])
+        dealerHand = Hand([Card('A'),Card('K')])
+        self.assertEqual( Hand.compare(playerHand,dealerHand), -1)
 
+        playerHand = Hand([Card('9'),Card('K'), Card('2')])
+        dealerHand = Hand([Card('A'),Card('K')])
+        self.assertEqual( Hand.compare(playerHand,dealerHand), -1)
+
+        playerHand = Hand([Card('2'),Card('4')])
+        dealerHand = Hand([Card('3'),Card('3')])
+        self.assertEqual( Hand.compare(playerHand,dealerHand), 0)
+
+        playerHand = Hand([Card('Q'),Card('A')])
+        dealerHand = Hand([Card('10'),Card('A')])
+        self.assertEqual( Hand.compare(playerHand,dealerHand), 0) 
+        
 if __name__ == "__main__":
     unittest.main()
