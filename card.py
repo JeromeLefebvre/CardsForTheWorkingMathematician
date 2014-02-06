@@ -7,9 +7,9 @@ class card(object):
 	ace = 0, 2 = 1, ... , 10 = 9, Jack = 10, Queen = 11, King = 12
 	'''
 	# Here are class variables
-	_suits = {0:'Clubs', 1:'Diamonds', 2:'Hearts', 3:'Spades'}
+	_suits = {3:'Clubs', 2:'Diamonds', 1:'Hearts', 0:'Spades'}
 	# Since values are unique, it is nice to look them the other way around
-	_suits_reverse = {'Spades': 3, 'Clubs': 0, 'Diamonds': 1, 'Hearts': 2, 'S':3, 'C': 0, 'D':1, 'H':2}
+	_suits_reverse = {'Spades': 0, 'Clubs': 3, 'Diamonds': 2, 'Hearts': 1, 'S':0, 'C': 3, 'D':2, 'H':1}
 	_ranks = {0: 'Ace', 1: '2', 2: '3', 3: '4', 4: '5',5: '6',6: '7', 7: '8', 8: '9', 9:'10', 10:'Jack', 11:'Queen', 12:'King'}
 	_ranks_reverse = {'Ace': 0, '10': 9, 'Jack': 10, 'King': 12, '6': 5, '7': 6, '4': 3, '5': 4, '2': 1, '3': 2, 'Queen': 11, '8': 7, '9': 8, 'A':0, 'Q':11, 'J': 10, 'K': 12}
 
@@ -146,6 +146,7 @@ class TestHand(unittest.TestCase):
 		one = card(1, 'H')
 		two = card(2, 'S')
 		self.assertEqual( sorted([two,one]), [one,two])		
+		
 		oneH = card('2', 'H')
 		oneS = card('2', 'S')
 		oneC = card('2', 'C')
@@ -188,7 +189,7 @@ class TestHand(unittest.TestCase):
 		self.assertTrue(c.suit() in [0,1,2,3])
 
 	def test_classMethod(self):
-		self.assertEqual(card.suits_name(2),'Hearts')
+		self.assertEqual(card.suits_name(2),'Diamonds')
 	
 if __name__ == "__main__":
 	unittest.main()
