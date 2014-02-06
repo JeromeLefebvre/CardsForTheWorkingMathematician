@@ -3,7 +3,7 @@ class card(object):
 	the suited is sorted as:
 	clubs = 0, diamonds = 1, hearts = 2, spades = 3
 	the ranks are:
-	ace = 0, 1 = 1, 2 = 2, ... , 10 = 10, Jack = 11, Queen = 12, King = 13
+	ace = 0, 2 = 1, ... , 10 = 9, Jack = 10, Queen = 11, King = 12
 	'''
 	# Here are class variables
 	_suites = {0:'Clubs', 1:'Diamonds', 2:'Hearts',3:'Spades'}
@@ -160,6 +160,8 @@ class TestHand(unittest.TestCase):
 			else:
 				return x.rank()
 		two = card('2')
+		# One compare with Ace = 0, one with Ace = 11
+		self.assertEqual( sorted( [A,two], key= lambda x: card.cardCompare(x,withSuites=True)), [A,two] )
 		self.assertEqual( sorted( [A,two], key= aceWorthElven), [two,A] )
 	def test_compare(self):
 		self.assertTrue( card('K') > card('Q'))
