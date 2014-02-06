@@ -18,8 +18,8 @@ class Hand(object):
             print (card)
 
     def isBusted(self):
-        ''' isBusted() -> bool -- returns if the hand is under 21 points for a choice value of aces '''
-        return min(self.value()) <= 21
+        ''' isBusted() -> bool -- returns if the hand has a busted hand value '''
+        return sum(self.value()) == -1
 
     def isBlackJack(self):
         '''isBlackJack() -> bool -- returns whether the hand is a BlackJack '''
@@ -33,8 +33,10 @@ class Hand(object):
         # if there is one at least one ace, we get two possible values for the score if it won't go over 21
         if any(card.isAce() for card in self._cards) and total <= 11:
             total = [total, total+10]
-        else:
+        elif total<=21:
             total = [total]
+        else: #assign total of -1 to busted hands. this will be useful for comparison since busted hands never win
+            total=[-1]
         return total
 
     def _compare(self, other, method):

@@ -40,7 +40,18 @@ class Player(object):
         ''' Displays player's hand'''
         self._hand.displayCards()
 
+    def updateAfterHit(self,card):
+        ''' Here we update a player class after a hit'''
+        if isinstance(card,Card):
+            self._hand.receive(card)
+
+    def updateAfterStay(self):
+        ''' Here we update a player class after a stay; so far nothing happens'''
+        pass
+
+
 class NormalPlayer(Player):
+    '''This class corresponds to normal players in the table'''
     def __init__(self, hand=None, money=0, name = "Stranger"):
         Player.__init__(self, hand, money, name)
 
@@ -54,14 +65,18 @@ class NormalPlayer(Player):
         except ValueError:
             print ("Bet is not an integer")
 
-    def hit(self):
-        pass
 
 class Dealer(Player):
+    '''This class corresponds to the dealer. We assign no money to it and interpret
+    its money as wins or losses for the house'''
     def __init__(self, hand=None):
         Player.__init__(self, hand, 0, "Dealer")
 
 if __name__ == '__main__':
-    myplayer=NormalPlayer(Hand([Card('K'),Card('3')]))
+    myplayer=NormalPlayer(Hand([Card(),Card()]))
     myplayer.displayHand()
+    print (myplayer.hand().value())
+    myplayer.updateAfterHit(Card())
+    myplayer.displayHand()
+    print (myplayer.hand().value())
 

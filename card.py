@@ -14,7 +14,7 @@ class Card(object):
 	_RANKS_REVERSE = {'Ace': 0, '10': 9, 'Jack': 10, 'King': 12, '6': 5, '7': 6, '4': 3, '5': 4, '2': 1, '3': 2, 'Queen': 11, '8': 7, '9': 8, 'A':0, 'Q':11, 'J': 10, 'K': 12}
 
 	# The value of each suits
-	_BLACKJACK_VALUE = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'Jacks':10,'Queen':10,'King':10,'Ace':1}
+	_BLACKJACK_VALUE = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'Jack':10,'Queen':10,'King':10,'Ace':1, 'A':1, 'Q':10, 'J': 10, 'K': 10}
 	def __init__(self,rank=None,suit=None):
 		# if you don't specify a rank, pick one at random
 		if rank == None:
