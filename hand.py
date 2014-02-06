@@ -69,6 +69,12 @@ class Hand(object):
             elif not playerHand.isBlackJack() and dealerHand.isBlackJack():
                 return -1
 
+    def __repr__(self):
+        return "Hand(cards=%r)" % self._cards
+
+    def __str__(self):
+        return "%s" % [str(card) for card in self._cards]
+
     def _compare(self, other, method):
         ''' _compare(Hand, function) -> bool -- compares two hands of blackjack'''
         try:
@@ -179,6 +185,10 @@ class TestHand(unittest.TestCase):
         playerHand = Hand([Card('Q'),Card('A')])
         dealerHand = Hand([Card('10'),Card('A')])
         self.assertEqual( Hand.compare(playerHand,dealerHand), 0) 
+
+    def test_repr(self):
+        playerHand = Hand([Card('Q'),Card('A')])
+        self.assertEqual( eval(repr(playerHand)), playerHand)
 
 if __name__ == "__main__":
     unittest.main()
