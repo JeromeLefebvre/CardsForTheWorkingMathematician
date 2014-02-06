@@ -10,7 +10,7 @@ class Hand():
 
     def receive(self,newCard):
         ''' receive(Card) -> None -- add a single card to the current hand '''
-        assert(isinstance(newCard,card))
+        assert(isinstance(newCard,Card))
         self._cards.append(newCard)
 
     def value(self):

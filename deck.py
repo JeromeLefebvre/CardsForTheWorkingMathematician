@@ -29,7 +29,7 @@ class Deck:
         for num_decks in range(self._size):
             for rank in range(13):
                 for suit in range(4):
-                    self._cards.append(card(rank,suit))
+                    self._cards.append(Card(rank,suit))
 
     def pop(self):
         ''' pop() -> Card -- returns the top of the card '''
