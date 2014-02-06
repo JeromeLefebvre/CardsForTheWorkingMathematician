@@ -16,14 +16,11 @@ from card import card
 from random import randrange
 
 class deck:
-    def __init__(self, size=None):
-        if size==None:
-            self._size=8
-        else:
-            try:
-                self._size=int(size)
-            except ValueError:
-                print ("Input for deck is not an integer")
+    def __init__(self, size=8):
+        try:
+            self._size=int(size)
+        except ValueError:
+            print ("Input for deck is not an integer")
         # We now populate the deck
         self._cards=[]
         for num_decks in range(self._size):
@@ -40,9 +37,7 @@ class deck:
     def shuffle(self):
         for i in range(self.cardsLeft()):
             j = randrange(i,self.cardsLeft())
-            temp = self._cards[i]
-            self._cards[i] = self._cards[j]
-            self._cards[j] = temp
+            self._cards[i],self._cards[j] = self._cards[j],self._cards[i]
 
 def main():
     pass
