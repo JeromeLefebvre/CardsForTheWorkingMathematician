@@ -1,4 +1,3 @@
-
 from card import Card
 
 class Hand():
@@ -15,7 +14,7 @@ class Hand():
 
     def isBusted(self):
         ''' isBusted() -> bool -- returns if the hand is under 21 points for a choice value of aces '''
-        return min(self.value) <= 21
+        return min(self.value()) <= 21
 
     def value(self):
         ''' value() -> list -- returns a list of one or two possible score for the hand '''
