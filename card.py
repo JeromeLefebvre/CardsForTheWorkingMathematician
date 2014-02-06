@@ -129,10 +129,7 @@ Queen of Hearts
 		return str(self._RANKS[self.rank()]) + " of " + str(self._SUITS[self.suit()])
 
 	def __repr__(self):
-		'''>>> card('Q')
-Queen of Spades
-		'''
-		return str(self._RANKS[self.rank()]) + " of " + str(self._SUITS[self.suit()])
+		return "Card(rank=%r,suit=%r)" % (Card._RANKS[self.rank()], Card._SUITS[self.suit()])
 
 	@classmethod
 	def suits_name(cls,suit):
@@ -216,5 +213,8 @@ class TestHand(unittest.TestCase):
 		self.assertEqual( Card('A').blackjackValue(), 1)
 		self.assertEqual( Card('A').blackjackValue(True), 11)
 
+	def test_repr(self):
+		K = Card('K', 'H')
+		self.assertEqual( eval(repr(K)), K)
 if __name__ == "__main__":
 	unittest.main()
