@@ -77,7 +77,7 @@ class Card(object):
 		# TypeError: unorderable types: int() < list()
 		# So I have this custom message
 		raise TypeError("unorderable types:" + str(type(other)) + " " + str(type(self)))
-			
+
 	def __eq__(self, other):
 		# Must compare against a card
 		if not isinstance(other,Card):
@@ -94,7 +94,7 @@ class Card(object):
 		if withsuits:
 			return method(self.rank(), other.rank()) or method(self.suit(), other.suit())
 		else:
-			return method(self.rank(), other.rank())		
+			return method(self.rank(), other.rank())
 		return method(self.rank(), other.rank())
 
 	def __gt__(self,other):
@@ -126,13 +126,13 @@ class Card(object):
 		>>> print(card('Q'))
 Queen of Hearts
 		'''
-		return str(self._RANKS[self._rank]) + " of " + str(self._SUITS[self._suit])
+		return str(self._RANKS[self.rank()]) + " of " + str(self._SUITS[self.suit()])
 
 	def __repr__(self):
 		'''>>> card('Q')
 Queen of Spades
 		'''
-		return str(self._RANKS[self._rank]) + " of " + str(self._SUITS[self._suit])
+		return str(self._RANKS[self.rank()]) + " of " + str(self._SUITS[self.suit()])
 
 	@classmethod
 	def suits_name(cls,suit):
@@ -148,7 +148,7 @@ Queen of Spades
 		return Card._BLACKJACK_VALUE[ Card._RANKS[self.rank()]]
 
 	def isAce(self):
-		return self._rank == 0
+		return self.rank()== 0
 
 import unittest
 class TestHand(unittest.TestCase):
@@ -165,8 +165,8 @@ class TestHand(unittest.TestCase):
 		self.assertEqual( sorted([two,one]), [one,two])
 		one = Card(1, 'H')
 		two = Card(2, 'S')
-		self.assertEqual( sorted([two,one]), [one,two])		
-		
+		self.assertEqual( sorted([two,one]), [one,two])
+
 		oneH = Card('2', 'H')
 		oneS = Card('2', 'S')
 		oneC = Card('2', 'C')
