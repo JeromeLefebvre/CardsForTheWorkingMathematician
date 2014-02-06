@@ -1,4 +1,3 @@
-
 class card(object):
 	''' The card object is an object that holds a rank and a suit
 	the suitd is sorted as:
@@ -17,11 +16,11 @@ class card(object):
 		# if you don't specify a rank, pick one at random
 		if rank == None:
 			from random import randint
-			self._rank = randint(0,13)
+			self._rank = randint(0,12)
 		else:
 			if isinstance(rank, int):
 				# raises an AssertionError if not within the accepted range
-				assert( 0 <= rank <= 13)
+				assert( 0 <= rank <= 12)
 				self._rank = rank
 			elif isinstance(rank, str):
 				assert( rank in [ key for key in card._ranks_reverse ] )
