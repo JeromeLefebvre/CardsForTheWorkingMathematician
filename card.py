@@ -1,3 +1,4 @@
+
 class card(object):
 	''' The card object is an object that holds a rank and a suit
 	the suitd is sorted as:
@@ -8,10 +9,11 @@ class card(object):
 	# Here are class variables
 	_suits = {3:'Clubs', 2:'Diamonds', 1:'Hearts', 0:'Spades'}
 	# Since values are unique, it is nice to look them the other way around
-	_suits_reverse = {'Spades': 0, 'Clubs': 3, 'Diamonds': 2, 'Hearts': 1, 'S':0, 'C': 3, 'D':2, 'H':1}
+	_suitsReverse = {'Spades': 0, 'Clubs': 3, 'Diamonds': 2, 'Hearts': 1, 'S':0, 'C': 3, 'D':2, 'H':1}
 	_ranks = {0: 'Ace', 1: '2', 2: '3', 3: '4', 4: '5',5: '6',6: '7', 7: '8', 8: '9', 9:'10', 10:'Jack', 11:'Queen', 12:'King'}
-	_ranks_reverse = {'Ace': 0, '10': 9, 'Jack': 10, 'King': 12, '6': 5, '7': 6, '4': 3, '5': 4, '2': 1, '3': 2, 'Queen': 11, '8': 7, '9': 8, 'A':0, 'Q':11, 'J': 10, 'K': 12}
-
+	_ranksReverse = {'Ace': 0, '10': 9, 'Jack': 10, 'King': 12, '6': 5, '7': 6, '4': 3, '5': 4, '2': 1, '3': 2, 'Queen': 11, '8': 7, '9': 8, 'A':0, 'Q':11, 'J': 10, 'K': 12}
+	# The value of each suits
+	_blackjackValue = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'Jacks':10,'Queen':10,'King':10,'Ace':1}
 	def __init__(self,rank=None,suit=None):
 		# if you don't specify a rank, pick one at random
 		if rank == None:
@@ -23,8 +25,8 @@ class card(object):
 				assert( 0 <= rank <= 12)
 				self._rank = rank
 			elif isinstance(rank, str):
-				assert( rank in [ key for key in card._ranks_reverse ] )
-				self._rank = card._ranks_reverse[rank]
+				assert( rank in [ key for key in card._ranksReverse ] )
+				self._rank = card._ranksReverse[rank]
 			else:
 				# Gave a weird input
 				raise ValueError
@@ -37,8 +39,8 @@ class card(object):
 				assert( 0 <= suit <= 3)
 				self._suit = suit
 			elif isinstance(suit, str):
-				assert( suit in [ key for key in card._suits_reverse ] )
-				self._suit = card._suits_reverse[suit]
+				assert( suit in [ key for key in card._suitsReverse ] )
+				self._suit = card._suitsReverse[suit]
 			else:
 				# Gave a weird input
 				raise ValueError
@@ -139,6 +141,13 @@ Queen of Spades
 	def ranks_name(cls,rank):
 		return card._ranks[rank]
 
+	def blackjackValue(self,aceWorthElven=False):
+		if aceWorthElven and self.rank() == card._ranksReverse[("Ace")]:
+			return 11
+		return card._blackjackValue[ card._ranks[self.rank()]]
+
+	def isAce(self):
+		return self._rank == 0
 
 import unittest
 class TestHand(unittest.TestCase):
@@ -200,6 +209,11 @@ class TestHand(unittest.TestCase):
 
 	def test_classMethod(self):
 		self.assertEqual(card.suits_name(2),'Diamonds')
-	
+
+	def test_blackjack(self):
+		self.assertEqual( card('Q').blackjackValue(), 10)
+		self.assertEqual( card('A').blackjackValue(), 1)
+		self.assertEqual( card('A').blackjackValue(True), 11)
+
 if __name__ == "__main__":
 	unittest.main()
