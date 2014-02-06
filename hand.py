@@ -15,15 +15,19 @@ class Hand(object):
     def displayCards(self):
         ''' Prints the content of the hand '''
         for card in self._cards:
-            print (card)
+            print(card)
 
     def isBusted(self):
         ''' isBusted() -> bool -- returns if the hand has a busted hand value '''
         return sum(self.value()) == -1
 
     def isBlackJack(self):
-        '''isBlackJack() -> bool -- returns whether the hand is a BlackJack '''
-        return (len(self._cards) == 2 and max(self.value())==21)
+        ''' isBlackJack() -> bool -- returns whether the hand is a BlackJack '''
+        return len(self._cards) == 2 and max(self.value())==21
+
+    def isPair(self):
+        ''' isPair() -> bool -- returns whether the hand contains of exactly one pair '''
+        return len(self._cards) == 2 and len(set(card.rank() for card in self._cards)) == 1
 
     def value(self):
         ''' value() -> list -- returns a list of one or two possible score for the hand '''
@@ -52,6 +56,7 @@ class Hand(object):
             return method(maxself, maxother)
         except AttributeError:
             pass
+
 
     def __eq__(self, other):
         # Must compare against a Hand
@@ -114,7 +119,10 @@ class TestHand(unittest.TestCase):
         self.assertTrue(playerhand ==  dealerhand)
 
     def test_handStates(self):
-        hand = Hand([Card('K'),Card('K'),Card('K')])
+        hand = Hand([Card('K'),Card('K')])
+        self.assertTrue(hand.isPair())
+        hand.receive(Card('K'))
+        self.assertFalse(hand.isPair())
         self.assertTrue(hand.isBusted())
 
 if __name__ == "__main__":
