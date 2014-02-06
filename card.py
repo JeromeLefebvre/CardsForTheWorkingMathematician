@@ -79,12 +79,20 @@ class card(object):
 		# Must compare against a card
 		if not isinstance(other,card):
 			return False
-		return self._compare(other, lambda x,y: x == y)
+		# We use withsuits since we want actual equality
+		return self._compare(other, lambda x,y: x == y, withsuits=True)
 
 	def __ne__(self,other):
 		if not isinstance(other,card):
 			return True
-		return self._compare(other, lambda x,y: x != y)
+		# != is more complicated, since we want to return True if either the rank or the suit differs
+		withsuits=True
+		method = lambda x,y: x != y
+		if withsuits:
+			return method(self.rank(), other.rank()) or method(self.suit(), other.suit())
+		else:
+			return method(self.rank(), other.rank())		
+		return method(self.rank(), other.rank())
 
 	def __gt__(self,other):
 		if isinstance(other, card):
@@ -138,7 +146,10 @@ class TestHand(unittest.TestCase):
 		pass
 
 	def test_sort(self):
-		self.assertEqual( sorted([card('Q'), card('J'), card('10')]) , [card('10'), card('J'), card('Q')])
+		Q = card('Q')
+		J = card('J')
+		t = card('10')
+		self.assertEqual( sorted([Q, J, t]) , [t, J, Q])
 		one = card('3', 'H')
 		two = card('4', 'S')
 		self.assertEqual( sorted([two,one]), [one,two])
@@ -151,7 +162,7 @@ class TestHand(unittest.TestCase):
 		oneC = card('2', 'C')
 		oneD = card('2', 'D')
 		self.assertEqual( sorted( [oneH, oneS], key= lambda x: (x.rank(), x.suit()) ), [oneS, oneH] )
-		self.assertEqual( sorted( [oneH, oneS, oneC, oneD], key= lambda x: card.cardCompare(x,withsuits=True)), [oneC, oneD, oneH, oneS] )
+		self.assertEqual( sorted( [oneH, oneS, oneC, oneD], key= lambda x: card.cardCompare(x,withsuits=True)), [oneS, oneH, oneD, oneC] )
 
 		K = card('K')
 		A = card('A')
@@ -165,6 +176,7 @@ class TestHand(unittest.TestCase):
 		# One compare with Ace = 0, one with Ace = 11
 		self.assertEqual( sorted( [A,two], key= lambda x: card.cardCompare(x,withsuits=True)), [A,two] )
 		self.assertEqual( sorted( [A,two], key= aceWorthElven), [two,A] )
+
 	def test_compare(self):
 		self.assertTrue( card('K') > card('Q'))
 		self.assertTrue( card('K') > card('J'))
@@ -173,10 +185,9 @@ class TestHand(unittest.TestCase):
 		self.assertFalse( card('5') >= 6)
 
 	def test_equality(self):
-		self.assertEqual( card('K') , card('K'))
-		self.assertFalse( card('K') == 5 )
+		self.assertEqual( card('K','H') , card('K','H'))
 		self.assertTrue( card() != 5 )
-		self.assertEqual( card('Q'), card('Q'))
+		self.assertTrue( card('K','H') != card('K','S'))
 
 	def test_creation(self):
 		# Verify that I can't create a card made of Junk
