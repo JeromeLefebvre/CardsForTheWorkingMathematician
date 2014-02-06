@@ -35,9 +35,8 @@ class deck:
         return len(self._cards)
 
     def shuffle(self):
-        for i in range(self.cardsLeft()):
-            j = randrange(i,self.cardsLeft())
-            self._cards[i],self._cards[j] = self._cards[j],self._cards[i]
+        from random import shuffle
+        shuffle(self._cards)
 
 def main():
     pass
