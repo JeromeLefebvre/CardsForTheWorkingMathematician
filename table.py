@@ -1,21 +1,21 @@
 import cmd
 from deck import Deck
 from hand import Hand
+from player import Player
 
 class BlackJackTable(cmd.Cmd):
     intro = 'Welcome to the blackjack table. Type help or ? to list commands.\n'
-    prompt = '(table) '
+    prompt = '(input) '
     file = None
 
     # Instructions
     def do_start(self, arg):
         'Starts a game'
-        self.deck = Deck(1)
-        self.hand = Hand()
+        self.match = Match()
 
     def do_hitme(self,arg):
         'Hit me'
-        self.hand.receive(self.deck.pop())
+        self.match.hit()
 
     def do_display(self,arg):
         'Display your hand'
