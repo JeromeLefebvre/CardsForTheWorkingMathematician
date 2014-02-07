@@ -54,10 +54,16 @@ class NormalPlayer(Player):
     '''This class corresponds to normal players in the table'''
     def __init__(self, hand=None, money=0, name = "Stranger"):
         Player.__init__(self, hand, money, name)
+        self._issplit=False
 
     def hasEnoughToBet(self,bet):
         '''Check whether a player has enough to bet'''
         return self.money()>=bet
+
+    def isSplit(self):
+        '''Check whether the player has split.'''
+        return self._issplit
+
 
     def updateAfterDouble(self,card,bet):
         '''Updates player's instance after doubling and makes sure player has enough'''
@@ -72,7 +78,15 @@ class NormalPlayer(Player):
 
     def updateAfterSplit(self,bet):
         '''Updates player after he split his pair. Creates an alternative hand'''
-        pass #TBW Must update the class hand to be able to discard.
+        try:
+            if self.hasEnoughToBet(int(bet)):
+                self._money-=bet
+                self._secondhand = self._hand.split()
+                self._issplit=True
+            else:
+                print("Not enough money to double")
+        except ValueError:
+            print ("Bet is not an integer")
 
 
     def updateAfterBet(self,bet):
