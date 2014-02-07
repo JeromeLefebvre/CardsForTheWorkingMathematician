@@ -74,6 +74,7 @@ class Hand(object):
 
     def __str__(self):
         return "%s" % [str(card) for card in self._cards]
+        #return ''.join(str(card) + '\n' for card in self._cards) + "Busted\n" if self.isBusted() else "" + "BlackJack\n" if self.isBlackJack() else "" + "Pair\n" if self.isPair() else ""
 
     def _compare(self, other, method):
         ''' _compare(Hand, function) -> bool -- compares two hands of blackjack'''

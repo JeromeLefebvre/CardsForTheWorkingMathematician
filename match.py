@@ -2,7 +2,7 @@ from deck import Deck
 from player import NormalPlayer,Dealer
 
 class Match(object):
-    def __init__(self,deck=None,players=None,dealer=None):
+    def __init__(self,table,deck=None,players=None,dealer=None):
         if isinstance(deck,Deck):
             self._deck=deck
         else:
@@ -12,6 +12,12 @@ class Match(object):
             self._players = players
         else:
             self._players = [NormalPlayer()]
+        # If more than one player for one sitting ask the name of each player
+        if len(self._players) > 1:
+            for index, player in enumerate(self._players):
+                name = table.feedback("Enter the name of player 1: ")
+
+
         if isinstance(dealer,Dealer):
             self._dealer = dealer
         else:

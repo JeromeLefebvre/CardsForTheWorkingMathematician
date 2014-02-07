@@ -12,7 +12,7 @@ from card import Card
 from hand import Hand
 
 class Player(object):
-    def __init__(self, hand=None, money=0, name = "Stranger"):
+    def __init__(self, hand=None, money=0, name="Player"):
         if isinstance(hand,Hand):
             self._hand=hand
         try:
