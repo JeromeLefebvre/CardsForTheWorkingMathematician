@@ -24,6 +24,9 @@ class Player(object):
         except:
             print ("Name is not valid")
 
+    def startMatch(self):
+        pass
+
     def hand(self):
         '''Getter for _hand'''
         return self._hand
@@ -40,6 +43,10 @@ class Player(object):
         ''' Displays player's hand'''
         self._hand.displayCards()
 
+    def __str__(self):
+        '''Nice representation for player'''
+        return "Name: %s, Cards: %s" % (self.name(), self.hand())
+
     def updateAfterHit(self,card):
         ''' Here we update a player class after a hit'''
         if isinstance(card,Card):
@@ -55,6 +62,9 @@ class NormalPlayer(Player):
     def __init__(self, hand=None, money=0, name = "Stranger"):
         Player.__init__(self, hand, money, name)
         self._issplit=False
+
+    def startMatch(self,cards):
+        self._hand=Hand(cards)
 
     def hasEnoughToBet(self,bet):
         '''Check whether a player has enough to bet'''
@@ -88,6 +98,8 @@ class NormalPlayer(Player):
         except ValueError:
             print ("Bet is not an integer")
 
+    def updateAfterSecondHit(self):
+        pass
 
     def updateAfterBet(self,bet):
         '''Updates player's money after betting and makes sure player has enough'''
@@ -106,6 +118,10 @@ class Dealer(Player):
     def __init__(self, hand=None):
         Player.__init__(self, hand, 0, "Dealer")
 
+    def startMatch(self,cards):
+        self._hand=Hand(cards[0])
+        self._holecard=cards[1]
+
 if __name__ == '__main__':
     myplayer=NormalPlayer(Hand([Card(),Card()]),5)
     myplayer.displayHand()
@@ -119,5 +135,6 @@ if __name__ == '__main__':
     myplayer.updateAfterDouble(Card(),5)
     myplayer.displayHand()
     print (myplayer.hand().value())
+    print (myplayer)
 
 
