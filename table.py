@@ -31,12 +31,12 @@ class BlackJackTable(cmd.Cmd):
 
     def do_bet(self,arg):
         'Bet an amount of money'
-        print("You've bet", *parse(arg))
+        
 
     def do_buyIn(self,arg):
         "Buy a certain amount of chips"
         self.match.playerBuysIn(*parse(arg))
-        
+
     def do_deck(self,arg):
         "Fix the number of decks be used: deck 6"
         self.math.newDecks(*parse(arg))

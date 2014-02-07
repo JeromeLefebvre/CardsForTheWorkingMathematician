@@ -25,6 +25,12 @@ class Match(object):
         self._dealer = Dealer()
 
         self._currentPlayer = 0
+
+    def setBet(self):
+        # Need to think of how match handles bet
+        pass
+
+    def startRound(self):
         for player in self._players:
         	player.startMatch([self._deck.pop(), self._deck.pop()])
         self._dealer.startMatch([self._deck.pop(), self._deck.pop()])
