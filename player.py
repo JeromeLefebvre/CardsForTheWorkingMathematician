@@ -118,9 +118,17 @@ class Dealer(Player):
     def __init__(self, hand=None):
         Player.__init__(self, hand, 0, "Dealer")
 
-    def startMatch(self,cards):
-        self._hand=Hand(cards[0])
-        self._holecard=cards[1]
+    def startMatch(self,cards,withholecard=True):
+        '''Deals initial cards to the dealer'''
+        if withholecard:
+            self._hand=Hand(cards[0])
+            self._holecard=cards[1]
+        else:
+            self._hand=Hand(cards)
+
+    def flipHoleCard(self):
+        '''Adds the holecard to the hand'''
+        self._hand.receive(self._holecard)
 
 if __name__ == '__main__':
     myplayer=NormalPlayer(Hand([Card(),Card()]),5)
