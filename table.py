@@ -4,9 +4,13 @@ from hand import Hand
 from player import Player
 from match import Match
 
+'''TODO:
+1. Set up a series of different tables
+
+'''
 class BlackJackTable(cmd.Cmd):
-    minbet = 1
-    maxbet = 5
+    minbet = 3
+    maxbet = 10
     intro = 'Welcome to the blackjack table. Type help or ? to list commands.\n The minimum bet is %s dollars, the maximum bet is %s dollars\n' % (minbet, maxbet)
     prompt = '(input) '
     file = None
@@ -28,6 +32,14 @@ class BlackJackTable(cmd.Cmd):
     def do_bet(self,arg):
         'Bet an amount of money'
         print("You've bet", *parse(arg))
+
+    def do_buyIn(self,arg):
+        "Buy a certain amount of chips"
+        self.match.playerBuysIn(*parse(arg))
+        
+    def do_deck(self,arg):
+        "Fix the number of decks be used: deck 6"
+        self.math.newDecks(*parse(arg))
 
     def do_changeDefault(self,arg):
         "Change the default amount for a bet: changeDefault 3 10"

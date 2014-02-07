@@ -74,6 +74,10 @@ class NormalPlayer(Player):
         '''Check whether the player has split.'''
         return self._issplit
 
+    def extraChips(self,dollar):
+        ''' extraChips(int) -> None -- Receive dollar worth of money'''
+        assert(dollar => 0)
+        self._money += dollar
 
     def updateAfterDouble(self,card,bet=0):
         '''Updates player's instance after doubling and makes sure player has enough'''

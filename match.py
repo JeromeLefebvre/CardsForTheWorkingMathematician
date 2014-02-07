@@ -32,6 +32,15 @@ class Match(object):
     def __str__(self):
         return "Players %s, Dealer %s" % ([str(player) for player in self._players], self._dealer)
 
+    def playerBuysIn(self,dollars):
+        ''' playerBuysIn(dollars) -> None -- The current player bought in some extra in chips'''
+        self._players[self._currentPlayer].extraChips(dollars)
+
+    def newDeck(self,numberOfDecks):
+        '''newDeck(int) -> None -- Throws away the old decks and starts over with new decsk'''
+        self._deck = Deck(numberOfDecks)
+        self._deck.shuffle()
+
     def hit(self):
         assert(self._deck.cardsLeft() > 0)
         self._players[self._currentPlayer].updateAfterHit(self._deck.pop())
