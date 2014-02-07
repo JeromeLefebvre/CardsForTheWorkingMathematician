@@ -23,7 +23,7 @@ class BlackJackTable(cmd.Cmd):
 
     def feedback(self, question):
         return input(question)
-        
+
     def do_hitme(self,arg):
         'Hit me'
         self.match.hit()
@@ -31,7 +31,7 @@ class BlackJackTable(cmd.Cmd):
 
     def do_bet(self,arg):
         'Bet an amount of money'
-        
+
 
     def do_buyIn(self,arg):
         "Buy a certain amount of chips"
@@ -67,4 +67,4 @@ def parse(arg):
 def parseString(arg):
     return tuple(map(str, arg.split()))
 if __name__ == '__main__':
-    BlackJackTable().cmdloop()        
+    BlackJackTable().cmdloop()

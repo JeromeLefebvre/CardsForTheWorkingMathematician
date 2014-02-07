@@ -76,7 +76,7 @@ class NormalPlayer(Player):
 
     def extraChips(self,dollar):
         ''' extraChips(int) -> None -- Receive dollar worth of money'''
-        assert(dollar => 0)
+        assert(dollar >= 0)
         self._money += dollar
 
     def updateAfterDouble(self,card,bet=0):
@@ -136,17 +136,16 @@ class Dealer(Player):
 
 if __name__ == '__main__':
     myplayer=NormalPlayer(Hand([Card(),Card()]),5)
-    myplayer.displayHand()
+    print (myplayer)
     print (myplayer.hand().value())
     myplayer.updateAfterHit(Card())
-    myplayer.displayHand()
-    print (myplayer.hand().value())
-    myplayer.updateAfterDouble(Card(),5)
-    myplayer.displayHand()
-    print (myplayer.hand().value())
-    myplayer.updateAfterDouble(Card(),5)
-    myplayer.displayHand()
-    print (myplayer.hand().value())
     print (myplayer)
+    print (myplayer.hand().value())
+    myplayer.updateAfterDouble(Card(),5)
+    print (myplayer)
+    print (myplayer.hand().value())
+    myplayer.updateAfterDouble(Card(),5)
+    print (myplayer)
+    print (myplayer.hand().value())
 
 
