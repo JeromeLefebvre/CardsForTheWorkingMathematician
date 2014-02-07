@@ -14,18 +14,15 @@ from hand import Hand
 class Player(object):
     def __init__(self, hand=None, money=0, name="Player"):
         if isinstance(hand,Hand):
-            self._hand=hand
+            self._hand = [hand]
         try:
-            self._money=int(money)
+            self._money = int(money)
         except ValueError:
-            print ("Money is not an integer")
+            raise ValueError("Money needs to be an integer")
         try:
-            self._name=str(name)
+            self._name = str(name)
         except:
-            print ("Name is not valid")
-
-    def startMatch(self):
-        pass
+            raise ValueError("Name is not valid, but I'd like to call you John")
 
     def hand(self):
         '''Getter for _hand'''
@@ -39,15 +36,11 @@ class Player(object):
         '''Getter for _name'''
         return self._name
 
-    def displayHand(self):
-        ''' Displays player's hand'''
-        self._hand.displayCards()
-
     def __str__(self):
         '''Nice representation for player'''
         return "Name: %s, Cards: %s" % (self.name(), self.hand())
 
-    def updateAfterHit(self,card):
+    def hit(self,card):
         ''' Here we update a player class after a hit'''
         if isinstance(card,Card):
             self._hand.receive(card)
@@ -55,7 +48,6 @@ class Player(object):
     def updateAfterStay(self):
         ''' Here we update a player class after a stay; so far nothing happens'''
         pass
-
 
 class NormalPlayer(Player):
     '''This class corresponds to normal players in the table'''
@@ -115,7 +107,6 @@ class NormalPlayer(Player):
         except ValueError:
             print ("Bet is not an integer")
 
-
 class Dealer(Player):
     '''This class corresponds to the dealer. We assign no money to it and interpret
     its money as wins or losses for the house'''
@@ -134,8 +125,19 @@ class Dealer(Player):
         '''Adds the holecard to the hand'''
         self._hand.receive(self._holecard)
 
+import unittest
+
+class TestPlayer(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def test_basicPlayer(self):
+        pass
+
 if __name__ == '__main__':
-    myplayer=NormalPlayer(Hand([Card(),Card()]),5)
+    #unittest.main()
+    
+    myplayer = NormalPlayer(Hand([Card(),Card()]),5)
     print(myplayer)
     print(myplayer.hand().value())
     myplayer.updateAfterHit(Card())
