@@ -7,6 +7,9 @@ class Hand(object):
         elif isinstance(cards,list):
             self._cards = cards
 
+    def sort(self):
+        self._cards = sorted( self._cards, key= lambda x: Card.cardCompare(x,withsuits=True))
+
     def receive(self,newCard):
         ''' receive(Card) -> None -- add a single card to the current hand '''
         assert(isinstance(newCard,Card))
@@ -73,8 +76,7 @@ class Hand(object):
         return "Hand(cards=%r)" % self._cards
 
     def __str__(self):
-        return "%s" % [str(card) for card in self._cards]
-        #return ''.join(str(card) + '\n' for card in self._cards) + "Busted\n" if self.isBusted() else "" + "BlackJack\n" if self.isBlackJack() else "" + "Pair\n" if self.isPair() else ""
+        return ''.join(str(card) + ' ' for card in self._cards).rstrip(' ')# + "Busted\n" if self.isBusted() else "" + "BlackJack\n" if self.isBlackJack() else "" + "Pair\n" if self.isPair() else ""
 
     def _compare(self, other, method):
         ''' _compare(Hand, function) -> bool -- compares two hands of blackjack'''
@@ -190,6 +192,10 @@ class TestHand(unittest.TestCase):
     def test_repr(self):
         playerHand = Hand([Card('Q'),Card('A')])
         self.assertEqual( eval(repr(playerHand)), playerHand)
+
+    def test_print(self):
+        playerHand = Hand([Card('Q','S'),Card('A','S')])
+        self.assertEqual(str(playerHand), "Q♠ A♠")
 
 if __name__ == "__main__":
     unittest.main()
