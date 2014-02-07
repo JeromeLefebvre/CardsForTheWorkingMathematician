@@ -2,13 +2,9 @@ from deck import Deck
 from player import NormalPlayer,Dealer
 
 class Match(object):
-<<<<<<< HEAD
-    def __init__(self,table,deck=None,players=None,dealer=None):
-=======
-    _PLAY_OPTIONS = {'H':"(H)it",'D':"(D)ouble",'S':"(S)tay",'P':"s(P)lit"}
 
-    def __init__(self,deck=None,players=None,dealer=None):
->>>>>>> origin/different_match
+    _PLAY_OPTIONS = {'H':"(H)it",'D':"(D)ouble",'S':"(S)tay",'P':"s(P)lit"}
+    def __init__(self,table=None,deck=None,players=None,dealer=None):
         if isinstance(deck,Deck):
             self._deck=deck
         else:

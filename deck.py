@@ -31,7 +31,7 @@ class Deck(object):
                     self._cards.append(Card(rank,suit))
 
     def pop(self):
-        ''' pop() -> Card -- returns the top of the card '''
+        ''' pop() -> Card -- returns the card on top of the deck '''
         return self._cards.pop()
 
     def cardsLeft(self):
@@ -41,6 +41,21 @@ class Deck(object):
     def shuffle(self):
         ''' shuffle() -> None -- shuffles the deck in place '''
         shuffle(self._cards)
+
+    def __repr__(self):
+        return "Deck(%r)" % self._size
+
+    def __str__(self):
+        # Note due to the card 10, not all lines are of the same lengths
+        string = ''
+        for i in range(0, len(self._cards)//52):
+            string += ''.join( str(card) for card in self._cards[i*52: (i+1)*52] )
+            string += '\n'
+        string = string[:-1]
+        if len(self._cards) % 52 != 0:
+            string += '\n'
+            string += ''.join( str(card) for card in self._cards[ 52*(len(self._cards)//52):] )
+        return string
 
 class TestHand(unittest.TestCase):
     def setup(self):

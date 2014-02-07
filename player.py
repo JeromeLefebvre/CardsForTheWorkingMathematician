@@ -59,7 +59,7 @@ class Player(object):
 
 class NormalPlayer(Player):
     '''This class corresponds to normal players in the table'''
-    def __init__(self, hand=None, money=0, name = "Stranger"):
+    def __init__(self, hand=None, money=0, name = "Player"):
         Player.__init__(self, hand, money, name)
         self._issplit=False
 
@@ -136,16 +136,16 @@ class Dealer(Player):
 
 if __name__ == '__main__':
     myplayer=NormalPlayer(Hand([Card(),Card()]),5)
-    print (myplayer)
-    print (myplayer.hand().value())
+    print(myplayer)
+    print(myplayer.hand().value())
     myplayer.updateAfterHit(Card())
-    print (myplayer)
-    print (myplayer.hand().value())
+    print(myplayer)
+    print(myplayer.hand().value())
     myplayer.updateAfterDouble(Card(),5)
-    print (myplayer)
-    print (myplayer.hand().value())
+    print(myplayer)
+    print(myplayer.hand().value())
     myplayer.updateAfterDouble(Card(),5)
-    print (myplayer)
-    print (myplayer.hand().value())
+    print(myplayer)
+    print(myplayer.hand().value())
 
 
