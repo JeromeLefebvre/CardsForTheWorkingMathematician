@@ -28,7 +28,7 @@ class Match(object):
         self._PLAY_CALLS = {'H':self.hit,'D':self.double,'S':self.stay,'P':self.split} #Whoa! A dictionary that we'll use to call functions!
 
     def __str__(self):
-        return "Players %s, Dealer %s" % ([str(player) for player in self._players], self._dealer)
+        return "Players. %sDealer. %s" % (''.join([str(player) for player in self._players])+"\n", self._dealer) #To be tried with multiple players
 
     def hit(self):
         assert(self._deck.cardsLeft() > 0)
@@ -46,6 +46,8 @@ class Match(object):
 
     def double(self):
         self._players[self._currentPlayer].updateAfterDouble(self._deck.pop())
+        if self._players[self._currentPlayer].hand().isBusted():
+            print ("You are busted!")
         if self._players[self._currentPlayer].isSplit():
             pass #HAVE TO FIGURE OUT WHAT TO DO HERE. ALSO NEED TO VERIFY WHAT HAND PLAYER IS AT, FIRST OR SECOND
         else:
@@ -53,7 +55,8 @@ class Match(object):
 
     def split(self):
         self._players[self._currentPlayer].updateAfterSplit()
-        # More should be done here. Maybe don't try split for now.
+        # More should be done here. In particular, one must check whether splitting is possible.
+        # At this point, an exception is thrown and caught by the except in play(). Maybe don't try split for now.
 
     def play(self):
         '''This is the flow control method inside match. '''
@@ -61,9 +64,10 @@ class Match(object):
         while self._currentPlayer<len(self._players):
             print(match)
             print()
-            print ("Your options are: %s" % " ".join([str(Match._PLAY_OPTIONS[key]) for key in Match._PLAY_OPTIONS.keys()]))
-            print()
+            # At this point, must check whether player has blackjack!
             try:
+                print ("Your options are: %s" % " ".join([str(Match._PLAY_OPTIONS[key]) for key in Match._PLAY_OPTIONS.keys()]))
+                print()
                 user_input=str(input("What would you like to do?")).upper()
                 assert(user_input in Match._PLAY_OPTIONS.keys())
                 self._PLAY_CALLS[user_input]() #Neat way to store and call functions!
@@ -71,9 +75,10 @@ class Match(object):
                 print("Invalid input! Try again")
                 print()
 
-        print("Done with players!") #Now we should do the dealer's part
+        print("Done with players!")
         print()
         print(match)
+        #Now we should do the dealer's part and the results. Off to sleep!
 
 
 if __name__ == "__main__":
