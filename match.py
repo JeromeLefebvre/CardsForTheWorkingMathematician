@@ -46,6 +46,9 @@ class Match(object):
 
     def split(self):
         self._players[self._currentPlayer].updateAfterSplit()
+        
+    delf play(self):
+        pass
 
 if __name__ == "__main__":
     match = Match()
