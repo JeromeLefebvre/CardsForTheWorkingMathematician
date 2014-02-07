@@ -66,7 +66,7 @@ class NormalPlayer(Player):
     def startMatch(self,cards):
         self._hand=Hand(cards)
 
-    def hasEnoughToBet(self,bet):
+    def hasEnoughToBet(self,bet=0):
         '''Check whether a player has enough to bet'''
         return self.money()>=bet
 
@@ -75,7 +75,7 @@ class NormalPlayer(Player):
         return self._issplit
 
 
-    def updateAfterDouble(self,card,bet):
+    def updateAfterDouble(self,card,bet=0):
         '''Updates player's instance after doubling and makes sure player has enough'''
         try:
             if self.hasEnoughToBet(int(bet)):
@@ -86,7 +86,7 @@ class NormalPlayer(Player):
         except ValueError:
             print ("Bet is not an integer")
 
-    def updateAfterSplit(self,bet):
+    def updateAfterSplit(self,bet=0):
         '''Updates player after he split his pair. Creates an alternative hand'''
         try:
             if self.hasEnoughToBet(int(bet)):
@@ -101,7 +101,7 @@ class NormalPlayer(Player):
     def updateAfterSecondHit(self):
         pass
 
-    def updateAfterBet(self,bet):
+    def updateAfterBet(self,bet=0):
         '''Updates player's money after betting and makes sure player has enough'''
         try:
             if self.hasEnoughToBet(int(bet)):
