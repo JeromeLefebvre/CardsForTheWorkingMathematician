@@ -12,7 +12,7 @@ from card import Card
 from hand import Hand
 
 class Player(object):
-    def __init__(self, hand=None, money=0, name = "Stranger"):
+    def __init__(self, hand=None, money=0, name="Player"):
         if isinstance(hand,Hand):
             self._hand=hand
         try:
@@ -74,6 +74,10 @@ class NormalPlayer(Player):
         '''Check whether the player has split.'''
         return self._issplit
 
+    def extraChips(self,dollar):
+        ''' extraChips(int) -> None -- Receive dollar worth of money'''
+        assert(dollar >= 0)
+        self._money += dollar
 
     def updateAfterDouble(self,card,bet=0):
         '''Updates player's instance after doubling and makes sure player has enough'''
@@ -132,17 +136,16 @@ class Dealer(Player):
 
 if __name__ == '__main__':
     myplayer=NormalPlayer(Hand([Card(),Card()]),5)
-    myplayer.displayHand()
+    print (myplayer)
     print (myplayer.hand().value())
     myplayer.updateAfterHit(Card())
-    myplayer.displayHand()
-    print (myplayer.hand().value())
-    myplayer.updateAfterDouble(Card(),5)
-    myplayer.displayHand()
-    print (myplayer.hand().value())
-    myplayer.updateAfterDouble(Card(),5)
-    myplayer.displayHand()
-    print (myplayer.hand().value())
     print (myplayer)
+    print (myplayer.hand().value())
+    myplayer.updateAfterDouble(Card(),5)
+    print (myplayer)
+    print (myplayer.hand().value())
+    myplayer.updateAfterDouble(Card(),5)
+    print (myplayer)
+    print (myplayer.hand().value())
 
 

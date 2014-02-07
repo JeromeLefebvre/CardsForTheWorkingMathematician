@@ -8,9 +8,11 @@ class Card(object):
 	'''
 	# Here are class variables
 	_SUITS = {3:'Clubs', 2:'Diamonds', 1:'Hearts', 0:'Spades'}
+	_SUITS_ICON = {3:'♣', 2:'♦',1:'♥',0:'♠'}
 	# Since values are unique, it is nice to look them the other way around
 	_SUITS_REVERSE = {'Spades': 0, 'Clubs': 3, 'Diamonds': 2, 'Hearts': 1, 'S':0, 'C': 3, 'D':2, 'H':1}
 	_RANKS = {0: 'Ace', 1: '2', 2: '3', 3: '4', 4: '5',5: '6',6: '7', 7: '8', 8: '9', 9:'10', 10:'Jack', 11:'Queen', 12:'King'}
+	_RANKS_SHORT = {0: 'A', 1: '2', 2: '3', 3: '4', 4: '5',5: '6',6: '7', 7: '8', 8: '9', 9:'10', 10:'J', 11:'Q', 12:'K'}
 	_RANKS_REVERSE = {'Ace': 0, '10': 9, 'Jack': 10, 'King': 12, '6': 5, '7': 6, '4': 3, '5': 4, '2': 1, '3': 2, 'Queen': 11, '8': 7, '9': 8, 'A':0, 'Q':11, 'J': 10, 'K': 12}
 
 	# The value of each suits
@@ -126,7 +128,7 @@ class Card(object):
 		>>> print(card('Q'))
 Queen of Hearts
 		'''
-		return str(self._RANKS[self.rank()]) + " of " + str(self._SUITS[self.suit()])
+		return str(self._RANKS_SHORT[self.rank()]) + str(self._SUITS_ICON[self.suit()])
 
 	def __repr__(self):
 		return "Card(rank=%r,suit=%r)" % (Card._RANKS[self.rank()], Card._SUITS[self.suit()])
@@ -216,5 +218,10 @@ class TestHand(unittest.TestCase):
 	def test_repr(self):
 		K = Card('K', 'H')
 		self.assertEqual( eval(repr(K)), K)
+
+	def test_print(self):
+		K = Card('K', 'H')
+		self.assertEqual( str(K), "K♥")
+
 if __name__ == "__main__":
 	unittest.main()
