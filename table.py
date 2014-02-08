@@ -37,6 +37,10 @@ class BlackJackTable(cmd.Cmd):
     def do_bet(self,arg):
         'Bet an amount of money'
 
+    def do_stay(self,arg):
+        'Current player stays'
+        self.match.stay()
+        
     def do_changeName(self,arg):
         self.player.name = parseString(arg)
         print("I'm sorry, hello there %s " % self.player.name)
@@ -65,6 +69,8 @@ class BlackJackTable(cmd.Cmd):
         print(self.player.name + " has " + str(self.player.money()) + "$")
         if self.inMatch:
             print(self.player.hand())
+            print("########################")
+            print(self.dealer.hand())
 
     def do_quit(self,arg):
         'Quit the game'

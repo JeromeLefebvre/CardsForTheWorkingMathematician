@@ -110,7 +110,7 @@ class Dealer(Player):
     def __init__(self, hand=None,name="Malkovich"):
         Player.__init__(self, hand, 0, "Dealer")
 
-    def startMatch(self,cards,withholecard=True):
+    def startMatch(self,cards,withholecard=False):
         '''Deals initial cards to the dealer'''
         if withholecard:
             self._hand=Hand(cards[0])

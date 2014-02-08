@@ -1,5 +1,6 @@
 from deck import Deck
 from player import NormalPlayer,Dealer
+from hand import Hand
 
 class Match(object):
 
@@ -22,7 +23,6 @@ class Match(object):
             self._dealer = dealer
         else:
             self._dealer = Dealer()
-        self._dealer = Dealer()
         self._currentPlayer = 0
         self.startRound()
 
@@ -54,11 +54,19 @@ class Match(object):
     def hit(self):
         assert(self._deck.cardsLeft() > 0)
         self._players[self._currentPlayer].hit(self._deck.pop())
+        self._dealer.hit(self._deck.pop())
         if self._players[self._currentPlayer].hand().isBusted():
             print ("You are busted!")
             self._currentPlayer = (self._currentPlayer + 1 if self._currentPlayer + 1 < len(self._players) else 0)
 
     def stay(self):
+        if Hand.compare(self._players[self._currentPlayer].hand(), self._dealer.hand()) == 1:
+            print(self._players[self._currentPlayer].name + " won!")
+        elif Hand.compare(self._players[self._currentPlayer].hand(), self._dealer.hand()) == -1:
+            print(self._dealer.name + " has won")
+        else:
+            print("It is a tie")
+        return
         self._players[self._currentPlayer].updateAfterStay()
         if self._players[self._currentPlayer].isSplit():
             pass #HAVE TO FIGURE OUT WHAT TO DO HERE. ALSO NEED TO VERIFY WHAT HAND PLAYER IS AT, FIRST OR SECOND
