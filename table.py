@@ -18,7 +18,7 @@ class BlackJackTable(cmd.Cmd):
     def preloop(self):
         self.inMatch = False
         self.player = NormalPlayer(name="John", money=20)
-        self.dealer = Dealer(name="Malkovich")
+        self.dealer = Dealer(name="Malkovich",standOn17=True)
     # Instructions 
     def do_start(self, arg):
         'Starts a game'

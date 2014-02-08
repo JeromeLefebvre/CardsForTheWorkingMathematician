@@ -104,11 +104,28 @@ class NormalPlayer(Player):
         except ValueError:
             print ("Bet is not an integer")
 
+'''
+"Dealer stands on all 17s": In this case, the dealer must continue to take cards ("hit") 
+until his total is 17 or greater. An Ace in the dealer's hand is always counted as 11 if
+ possible without the dealer going over 21. For example, (Ace,8) would be 19 and the 
+ dealer would stop drawing cards ("stand"). Also, (Ace,6) is 17 and again the dealer will stand. 
+ (Ace,5) is only 16, so the dealer would hit. He will continue to draw cards until the hand's value 
+ is 17 or more. For example, (Ace,5,7) is only 13 so he hits again. (Ace,5,7,5) makes 18 
+ so he would stop ("stand") at that point.
+
+Dealer hits soft 17": Some casinos use this rule variation instead. This rule is identical except 
+for what happens when the dealer has a soft total of 17. Hands such as (Ace,6), (Ace,5,Ace), and 
+(Ace, 2, 4) are all examples of soft 17. The dealer hits these hands, and stands on soft 18 or higher,
+ or hard 17 or higher. When this rule is used, the house advantage against the players is slightly increased.
+'''
 class Dealer(Player):
     '''This class corresponds to the dealer. We assign no money to it and interpret
     its money as wins or losses for the house'''
-    def __init__(self, hand=None,name="Malkovich"):
+    def __init__(self, hand=None,name="Malkovich", standOn17=False, soft17=False):
         Player.__init__(self, hand, 0, "Dealer")
+        assert(standOn17 ^ soft17) # Dealer can only follow one rule
+        self._standOn17 = standOn17
+        self._soft17 = soft17
 
     def startMatch(self,cards,withholecard=False):
         '''Deals initial cards to the dealer'''
@@ -122,8 +139,23 @@ class Dealer(Player):
         '''Adds the holecard to the hand'''
         self._hand.receive(self._holecard)
 
-import unittest
+    def shouldHit(self):
+        ''' shoudHit() -> bool -- returns if the dealer wants to hit or not base on the choice of a 17 rule'''
+        if self._standOn17:
+            return self._hand.bestValue() < 17
+        elif self._soft17:
+            # Soft 17
+            if self._hand.bestValue() == 17 and len(self._hand.value()) == 2:
+                return True
+            # Hard 17 or soft >= 18
+            elif self._hand.bestValue() >= 17:
+                return False
+            else:
+                return True
+        else:
+            raise ValueError("Dealer is not setup well")
 
+import unittest
 class TestPlayer(unittest.TestCase):
     def setUp(self):
         pass
@@ -131,8 +163,34 @@ class TestPlayer(unittest.TestCase):
     def test_basicPlayer(self):
         pass
 
+    def test_dealer(self):
+        aDealer = Dealer(standOn17=True)
+        aDealer.startMatch([Card('K'), Card('7')]) # hit 17
+        self.assertFalse(aDealer.shouldHit())
+
+        aDealer = Dealer(standOn17=True)
+        aDealer.startMatch([Card('K'), Card('6')]) # Below 17
+        self.assertTrue(aDealer.shouldHit())
+
+        aDealer = Dealer(standOn17=True)
+        aDealer.startMatch([Card('A'), Card('6')]) # shoft 17
+        self.assertFalse(aDealer.shouldHit())     
+
+
+        aDealer = Dealer(soft17=True)
+        aDealer.startMatch([Card('A'), Card('6')]) # soft 17
+        self.assertTrue(aDealer.shouldHit())
+
+        aDealer = Dealer(soft17=True)
+        aDealer.startMatch([Card('K'), Card('7')]) # hard 17
+        self.assertFalse(aDealer.shouldHit())
+
+        aDealer = Dealer(soft17=True)
+        aDealer.startMatch([Card('K'), Card('6'), Card('2')]) # hard 18
+        self.assertFalse(aDealer.shouldHit())   
+
 if __name__ == '__main__':
-    #unittest.main()
+    unittest.main()
     
     myplayer = NormalPlayer(Hand([Card(),Card()]),5)
     print(myplayer)

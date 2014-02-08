@@ -63,7 +63,8 @@ class Match(object):
     def hit(self):
         assert(self._deck.cardsLeft() > 0)
         self._players[self._currentPlayer].hit(self._deck.pop())
-        self._dealer.hit(self._deck.pop())
+        if self._dealer.shouldHit():
+            self._dealer.hit(self._deck.pop())
         if self._players[self._currentPlayer].hand().isBusted():
             print ("You are busted!")
             self._currentPlayer = (self._currentPlayer + 1 if self._currentPlayer + 1 < len(self._players) else 0)
