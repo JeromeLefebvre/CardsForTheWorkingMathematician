@@ -46,6 +46,10 @@ class Player(object):
         ''' Here we update a player class after a stay; so far nothing happens'''
         pass
 
+    def cleanHand(self):
+        ''' cleanHand -> None -- Clears a player's hand, called after a match is over'''
+        self._hand = None
+
 class NormalPlayer(Player):
     '''This class corresponds to normal players in the table'''
     def __init__(self, hand=None, money=0, name = "Player"):
@@ -53,11 +57,16 @@ class NormalPlayer(Player):
         self._issplit=False
 
     def startMatch(self,cards):
+        ''' startMatch(list of cards) -> None -- receive a hand of 2 cards at the begining of a match'''
         self._hand=Hand(cards)
 
     def canBet(self,bet):
         '''canBet() -> bool -- Checks whether the player has enough to bet'''
         return self.money()>=bet
+
+    def collectBet(self,bet):
+        ''' collectBet(int) -> None -- A loss or win is recorded in the player's money (a negative number is a loss)'''
+        self._money += bet
 
     def isSplit(self):
         '''Check whether the player has split.'''
@@ -162,6 +171,14 @@ class TestPlayer(unittest.TestCase):
 
     def test_basicPlayer(self):
         pass
+
+    def test_betting(self):
+        john = NormalPlayer(money=10)
+        self.assertTrue(john.canBet(5))
+        john.collectBet(-5)
+        self.assertFalse(john.canBet(6)) # only has 5 dollars left
+        john.collectBet(20)
+        self.assertTrue(john.canBet(25))
 
     def test_dealer(self):
         aDealer = Dealer(standOn17=True)
