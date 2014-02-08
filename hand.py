@@ -1,11 +1,12 @@
 from card import Card
 
 class Hand(object):
-    def __init__(self,cards=[]):
+    def __init__(self,cards=[],firstHand=True):
         if isinstance(cards,Card):
             self._cards = [cards]
         elif isinstance(cards,list):
             self._cards = cards
+        self._firstHand = firstHand
 
     def sort(self):
         self._cards = sorted( self._cards, key= lambda x: Card.cardCompare(x,withsuits=True))
@@ -25,8 +26,8 @@ class Hand(object):
         return sum(self.value()) == -1
 
     def isBlackJack(self):
-        ''' isBlackJack() -> bool -- returns whether the hand is a BlackJack '''
-        return len(self._cards) == 2 and max(self.value())==21
+        ''' isBlackJack() -> bool -- returns whether the hand is a BlackJack, which means the first two cards add to soft 21'''
+        return len(self._cards) == 2 and max(self.value())==21 and self._firstHand
 
     def isPair(self):
         ''' isPair() -> bool -- returns whether the hand contains of exactly one pair '''
@@ -53,7 +54,8 @@ class Hand(object):
     def split(self):
         ''' split() -> hand -- returns a new hand containing half of the pair that is currently in the hand '''
         assert(self.isPair())
-        newHand = Hand(self._cards.pop())
+        self._firstHand = False
+        newHand = Hand(self._cards.pop(),firstHand=False)
         return newHand
 
     @classmethod
@@ -167,6 +169,11 @@ class TestHand(unittest.TestCase):
 
         hand = Hand([Card('Q','H'),Card('K','D')])
         self.assertRaises(AssertionError, hand.split)
+
+        hand = Hand([Card('J','H'),Card('J','D')])
+        newHand = hand.split()
+        newHand.receive(Card('A'))
+        self.assertFalse(newHand.isBlackJack())
 
     def test_compare(self):
         playerHand = Hand([Card('K'),Card('K')])
