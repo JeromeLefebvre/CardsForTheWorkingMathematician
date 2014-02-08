@@ -5,7 +5,7 @@ from hand import Hand
 class Match(object):
 
     _PLAY_OPTIONS = {'H':"(H)it",'D':"(D)ouble",'S':"(S)tay",'P':"s(P)lit"}
-    def __init__(self,table=None,players=None,dealer=None,deck=None):
+    def __init__(self,table,players=None,dealer=None,deck=None):
         if isinstance(deck,Deck):
             self._deck=deck
         else:
@@ -15,16 +15,25 @@ class Match(object):
             self._players = players
         else:
             self._players = [NormalPlayer()]
+        self._table = table
+
         # If more than one player for one sitting ask the name of each player
         if len(self._players) > 1:
             for index, player in enumerate(self._players):
-                name = table.feedback("Enter the name of player 1: ")
+                name = self._table.feedback("Enter the name of player 1: ")
+
         if isinstance(dealer,Dealer):
             self._dealer = dealer
         else:
             self._dealer = Dealer()
         self._currentPlayer = 0
+        self.collectBets()
         self.startRound()
+
+    def collectBets(self):
+        self.bets = {}
+        for player in self._players:
+            self.bets[player] = self._table.collectBets(player.name)
 
     def setBet(self):
         # Need to think of how match handles bet

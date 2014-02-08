@@ -40,7 +40,20 @@ class BlackJackTable(cmd.Cmd):
     def do_stay(self,arg):
         'Current player stays'
         self.match.stay()
-        
+
+    def collectBets(self,name):
+        "Collects the amount each player wants to bet"
+        while True:
+            bet = input(name + " what is your bet? ")
+            try:
+                bet = int(bet)
+                if BlackJackTable.minbet <= bet <= BlackJackTable.maxbet:
+                    return bet
+                else:
+                    print("A bet needs to be between " + str(BlackJackTable.minbet) + " and " + str(BlackJackTable.maxbet))
+            except (TypeError, ValueError):
+                print("Please type in a number")
+
     def do_changeName(self,arg):
         self.player.name = parseString(arg)
         print("I'm sorry, hello there %s " % self.player.name)
