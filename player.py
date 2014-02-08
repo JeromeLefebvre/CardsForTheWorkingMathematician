@@ -55,8 +55,8 @@ class NormalPlayer(Player):
     def startMatch(self,cards):
         self._hand=Hand(cards)
 
-    def hasEnoughToBet(self,bet=0):
-        '''Check whether a player has enough to bet'''
+    def canBet(self,bet):
+        '''canBet() -> bool -- Checks whether the player has enough to bet'''
         return self.money()>=bet
 
     def isSplit(self):

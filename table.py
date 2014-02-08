@@ -48,7 +48,10 @@ class BlackJackTable(cmd.Cmd):
             try:
                 bet = int(bet)
                 if BlackJackTable.minbet <= bet <= BlackJackTable.maxbet:
-                    return bet
+                    if not self.player.canBet(bet):
+                        print("You can't make that bet, but there is an ATM down the corner")
+                    else:
+                        return bet
                 else:
                     print("A bet needs to be between " + str(BlackJackTable.minbet) + " and " + str(BlackJackTable.maxbet))
             except (TypeError, ValueError):
