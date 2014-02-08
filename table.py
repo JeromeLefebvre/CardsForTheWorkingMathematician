@@ -4,11 +4,11 @@ from hand import Hand
 from player import NormalPlayer, Dealer
 from match import Match
 
-'''TODO:
-1. Set up a series of different tables
-
-'''
 class BlackJackTable(cmd.Cmd):
+    Rules = {"standOn17":True, "softOn17":False, #Only one can be true
+             "3to2": True, "6to5":False, #Only one can be true
+             "EarlySurrender": True, "LatSurrender": False #At most 1 can be true
+             }
     minbet = 3
     maxbet = 10
     intro = "Hello John, I'm your dealer Malkovich. I see you have a few dollars, would you like to play some blackjack? \nThe minimum bet is %s dollars, the maximum bet is %s dollars\nType help or ? to list commands.\n " % (minbet, maxbet)
@@ -18,7 +18,7 @@ class BlackJackTable(cmd.Cmd):
     def preloop(self):
         self.inMatch = False
         self.player = NormalPlayer(name="John", money=20)
-        self.dealer = Dealer(name="Malkovich",standOn17=True)
+        self.dealer = Dealer(name="Malkovich",standOn17=BlackJackTable.Rules["standOn17"],soft17=BlackJackTable.Rules["softOn17"])
     # Instructions 
     def do_start(self, arg):
         'Starts a game'
