@@ -1,7 +1,7 @@
 import cmd
 from deck import Deck
 from hand import Hand
-from player import Player
+from player import NormalPlayer, Dealer
 from match import Match
 
 '''TODO:
@@ -11,16 +11,21 @@ from match import Match
 class BlackJackTable(cmd.Cmd):
     minbet = 3
     maxbet = 10
-    intro = 'Welcome to the blackjack table. Type help or ? to list commands.\n The minimum bet is %s dollars, the maximum bet is %s dollars\n' % (minbet, maxbet)
+    intro = "Hello John, I'm your dealer Malkovich. I see you have a few dollars, would you like to play some blackjack? \nThe minimum bet is %s dollars, the maximum bet is %s dollars\nType help or ? to list commands.\n " % (minbet, maxbet)
     prompt = '(input) '
     file = None
 
-    # Instructions
+    def preloop(self):
+        self.inMatch = False
+        self.player = NormalPlayer(name="John", money=20)
+        self.dealer = Dealer(name="Malkovich")
+    # Instructions 
     def do_start(self, arg):
         'Starts a game'
-        self.match = Match(table=self)
+        self.inMatch = True
+        self.match = Match(players=[self.player], table=self, dealer=self.dealer)
         self.do_display(None)
-
+        
     def feedback(self, question):
         return input(question)
 
@@ -32,6 +37,9 @@ class BlackJackTable(cmd.Cmd):
     def do_bet(self,arg):
         'Bet an amount of money'
 
+    def do_changeName(self,arg):
+        self.player.name = parseString(arg)
+        print("I'm sorry, hello there %s " % self.player.name)
 
     def do_buyIn(self,arg):
         "Buy a certain amount of chips"
@@ -54,7 +62,9 @@ class BlackJackTable(cmd.Cmd):
 
     def do_display(self,arg):
         'Display your hand'
-        print(self.match)
+        print(self.player.name + " has " + str(self.player.money()) + "$")
+        if self.inMatch:
+            print(self.player.hand())
 
     def do_quit(self,arg):
         'Quit the game'

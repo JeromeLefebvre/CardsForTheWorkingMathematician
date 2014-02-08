@@ -20,7 +20,8 @@ class Player(object):
         except ValueError:
             raise ValueError("Money needs to be an integer")
         try:
-            self._name = str(name)
+            # Name is not a private variable
+            self.name = str(name)
         except:
             raise ValueError("Name is not valid, but I'd like to call you John")
 
@@ -31,10 +32,6 @@ class Player(object):
     def money(self):
         '''Getter for _money'''
         return self._money
-
-    def name(self):
-        '''Getter for _name'''
-        return self._name
 
     def __str__(self):
         '''Nice representation for player'''
@@ -110,7 +107,7 @@ class NormalPlayer(Player):
 class Dealer(Player):
     '''This class corresponds to the dealer. We assign no money to it and interpret
     its money as wins or losses for the house'''
-    def __init__(self, hand=None):
+    def __init__(self, hand=None,name="Malkovich"):
         Player.__init__(self, hand, 0, "Dealer")
 
     def startMatch(self,cards,withholecard=True):

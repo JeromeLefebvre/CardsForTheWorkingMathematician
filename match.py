@@ -4,7 +4,7 @@ from player import NormalPlayer,Dealer
 class Match(object):
 
     _PLAY_OPTIONS = {'H':"(H)it",'D':"(D)ouble",'S':"(S)tay",'P':"s(P)lit"}
-    def __init__(self,table=None,deck=None,players=None,dealer=None):
+    def __init__(self,table=None,players=None,dealer=None,deck=None):
         if isinstance(deck,Deck):
             self._deck=deck
         else:
@@ -18,15 +18,13 @@ class Match(object):
         if len(self._players) > 1:
             for index, player in enumerate(self._players):
                 name = table.feedback("Enter the name of player 1: ")
-
-
         if isinstance(dealer,Dealer):
             self._dealer = dealer
         else:
             self._dealer = Dealer()
         self._dealer = Dealer()
-
         self._currentPlayer = 0
+        self.startRound()
 
     def setBet(self):
         # Need to think of how match handles bet
@@ -34,7 +32,9 @@ class Match(object):
 
     def startRound(self):
         for player in self._players:
-        	player.startMatch([self._deck.pop(), self._deck.pop()])
+            cardsToPass = [self._deck.pop(), self._deck.pop()]
+            #print("**", cardsToPass, "to player ", player.name)
+            player.startMatch(cardsToPass)
         self._dealer.startMatch([self._deck.pop(), self._deck.pop()])
 
         self._PLAY_CALLS = {'H':self.hit,'D':self.double,'S':self.stay,'P':self.split} #Whoa! A dictionary that we'll use to call functions!
@@ -53,10 +53,10 @@ class Match(object):
 
     def hit(self):
         assert(self._deck.cardsLeft() > 0)
-        self._players[self._currentPlayer].updateAfterHit(self._deck.pop())
+        self._players[self._currentPlayer].hit(self._deck.pop())
         if self._players[self._currentPlayer].hand().isBusted():
             print ("You are busted!")
-            self._currentPlayer+=1
+            self._currentPlayer = (self._currentPlayer + 1 if self._currentPlayer + 1 < len(self._players) else 0)
 
     def stay(self):
         self._players[self._currentPlayer].updateAfterStay()
