@@ -57,6 +57,10 @@ class BlackJackTable(cmd.Cmd):
             except (TypeError, ValueError):
                 print("Please type in a number")
 
+    def do_split(self,arg):
+        ''' Request to split the cards '''
+        self.match.split()
+
     def do_changeName(self,arg):
         self.player.name = parseString(arg)
         print("I'm sorry, hello there %s " % self.player.name)

@@ -30,8 +30,8 @@ class Hand(object):
         return len(self._cards) == 2 and max(self.value())==21 and self._firstHand
 
     def isPair(self):
-        ''' isPair() -> bool -- returns whether the hand contains of exactly one pair '''
-        return len(self._cards) == 2 and len(set(card.rank() for card in self._cards)) == 1
+        ''' isPair() -> bool -- returns whether the hand contains of exactly one pair and is on the first hand'''
+        return len(self._cards) == 2 and len(set(card.rank() for card in self._cards)) == 1 and self._firstHand
 
     def value(self):
         ''' value() -> list -- returns a list of one or two possible score for the hand '''

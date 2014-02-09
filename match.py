@@ -30,6 +30,17 @@ class Match(object):
         self.collectBets()
         self.startRound()
 
+    def split(self):
+        ''' split() -> None -- Splits the card of the currentPlayer if he has a pair or enough money'''
+        current = player[currentPlayer]
+        if not current.hand().isPair():
+            print("You can only split a pair on your first hand")
+            return
+        if not current.canBet(self.bets[current]):
+            print("You need matching funds to split a hand")
+            return
+        current.split()
+
     def collectBets(self):
         self.bets = {}
         for player in self._players:
