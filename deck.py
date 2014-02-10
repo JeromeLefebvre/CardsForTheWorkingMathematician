@@ -13,17 +13,20 @@ from random import shuffle
 from card import Card
 
 class Deck(object):
-    def __init__(self, size=8):
-        try:
-            self._size = int(size)
-        except ValueError:
-            raise ValueError("Input for deck is not an integer")
-        # We now populate the deck
-        self._cards = []
-        for num in range(self._size):
-            for rank in range(13):
-                for suit in range(4):
-                    self._cards.append(Card(rank,suit))
+    def __init__(self, size=8,listOfCards=None):
+        if listOfCards != None:
+            self._cards = listOfCards
+        else:
+            try:
+                self._size = int(size)
+            except ValueError:
+                raise ValueError("Input for deck is not an integer")
+            # We now populate the deck
+            self._cards = []
+            for num in range(self._size):
+                for rank in range(13):
+                    for suit in range(4):
+                        self._cards.append(Card(rank,suit))
 
     def pop(self):
         ''' pop() -> Card -- returns the card on top of the deck '''

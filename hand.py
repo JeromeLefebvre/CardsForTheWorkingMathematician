@@ -1,12 +1,13 @@
 from card import Card
 
 class Hand(object):
-    def __init__(self,cards=[],firstHand=True):
+    def __init__(self,cards=[],player=None,firstHand=True):
         if isinstance(cards,Card):
             self._cards = [cards]
         elif isinstance(cards,list):
             self._cards = cards
         self._firstHand = firstHand
+        self.player = player
 
     def sort(self):
         self._cards = sorted( self._cards, key= lambda x: Card.cardCompare(x,withsuits=True))
@@ -21,9 +22,14 @@ class Hand(object):
         for card in self._cards:
             print(card)
 
+    def hit(self, newCard):
+        ''' hit(Card) -> None -- add a single card to the current hand '''
+        assert(isinstance(newCard,Card))
+        self._cards.append(newCard)
+
     def isBusted(self):
         ''' isBusted() -> bool -- returns if the hand has a busted hand value '''
-        return sum(self.value()) == -1
+        return self.value() == [-1]
 
     def isBlackJack(self):
         ''' isBlackJack() -> bool -- returns whether the hand is a BlackJack, which means the first two cards add to soft 21'''
@@ -159,6 +165,8 @@ class TestHand(unittest.TestCase):
         self.assertTrue(hand.isPair())
         hand.receive(Card('K'))
         self.assertFalse(hand.isPair())
+        self.assertTrue(hand.isBusted())
+        hand = Hand([Card('A'),Card('J'),Card('K'), Card('A')])
         self.assertTrue(hand.isBusted())
 
     def test_slit(self):

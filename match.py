@@ -1,11 +1,11 @@
 from deck import Deck
 from player import NormalPlayer,Dealer
 from hand import Hand
-
+from card import Card as C
 class Match(object):
 
     _PLAY_OPTIONS = {'H':"(H)it",'D':"(D)ouble",'S':"(S)tay",'P':"s(P)lit"}
-    def __init__(self,table,players=None,dealer=None,deck=None):
+    def __init__(self,table=None,players=None,dealer=None,deck=None):
         if isinstance(deck,Deck):
             self._deck=deck
         else:
@@ -26,20 +26,32 @@ class Match(object):
             self._dealer = dealer
         else:
             self._dealer = Dealer()
-        self._currentPlayer = 0
-        self.collectBets()
+        self._currentHand = 0
+        if self._table:
+            self.collectBets()
+        self._hands = []
         self.startRound()
 
     def split(self):
         ''' split() -> None -- Splits the card of the currentPlayer if he has a pair or enough money'''
-        current = player[currentPlayer]
-        if not current.hand().isPair():
+        currentHand = self.hands[self._currentHand]
+        if not currentHand.isPair():
             print("You can only split a pair on your first hand")
             return
-        if not current.canBet(self.bets[current]):
+        if not currentHand.player.canBet(self.bets[current]):
             print("You need matching funds to split a hand")
             return
-        current.split()
+        newHand = currentHand.split()
+        self._hands.insert(self._currentHand, newHand)
+        self.handFinish()
+
+    def handFinish(self):
+        self.gameIsOver()
+        self._currentHand = (self._currentHand + 1 if self._currentHand + 1 < len(self._hands) else 0)
+        if self._table:
+            self._table.prompt = "(" + self._hands[self._currentHand].player.name + ")"
+        if isinstance(self._hands[self._currentHand].player, Dealer):
+            self.hit()
 
     def collectBets(self):
         self.bets = {}
@@ -50,13 +62,13 @@ class Match(object):
         # Need to think of how match handles bet
         pass
 
+    def dealerBust(self):
+        ''' dealerBust() -> None -- if the dealer bust, every remeaning hands wins'''
     def startRound(self):
         for player in self._players:
             cardsToPass = [self._deck.pop(), self._deck.pop()]
-            #print("**", cardsToPass, "to player ", player.name)
-            player.startMatch(cardsToPass)
-        self._dealer.startMatch([self._deck.pop(), self._deck.pop()])
-
+            self._hands.append( player.startMatch(cardsToPass) )
+        self._hands.append( self._dealer.startMatch([self._deck.pop(), self._deck.pop()]) )
         self._PLAY_CALLS = {'H':self.hit,'D':self.double,'S':self.stay,'P':self.split} #Whoa! A dictionary that we'll use to call functions!
 
     def __str__(self):
@@ -73,26 +85,34 @@ class Match(object):
 
     def hit(self):
         assert(self._deck.cardsLeft() > 0)
-        self._players[self._currentPlayer].hit(self._deck.pop())
-        if self._dealer.shouldHit():
-            self._dealer.hit(self._deck.pop())
-        if self._players[self._currentPlayer].hand().isBusted():
-            print ("You are busted!")
-            self._currentPlayer = (self._currentPlayer + 1 if self._currentPlayer + 1 < len(self._players) else 0)
+        if isinstance(self._hands[self._currentHand].player, Dealer):
+            if self._dealer.shouldHit():
+                self._dealer.hit(self._deck.pop())
+        else:
+            self._hands[self._currentHand].hit(self._deck.pop())
+        if self._hands[self._currentHand].isBusted():
+            print (self._hands[self._currentHand].player.name, "You are busted!")
+            self.deleteHand()
+        self.handFinish()
+
+
+    def gameIsOver(self):
+        if len(self._hands) <= 1 and self._table:
+            self._table.killMatch()
+
+    def deleteHand(self):
+        del self._hands[self._currentHand]
+        self._currentHand = (self._currentHand if self._currentHand < len(self._hands) else 0)
 
     def stay(self):
-        if Hand.compare(self._players[self._currentPlayer].hand(), self._dealer.hand()) == 1:
+        if Hand.compare(self._hands[self._currentHand], self._dealer.hand()) == 1:
             print(self._players[self._currentPlayer].name + " won!")
         elif Hand.compare(self._players[self._currentPlayer].hand(), self._dealer.hand()) == -1:
             print(self._dealer.name + " has won")
         else:
             print("It is a tie")
         return
-        self._players[self._currentPlayer].updateAfterStay()
-        if self._players[self._currentPlayer].isSplit():
-            pass #HAVE TO FIGURE OUT WHAT TO DO HERE. ALSO NEED TO VERIFY WHAT HAND PLAYER IS AT, FIRST OR SECOND
-        else:
-            self._currentPlayer+=1
+        #self._players[self._currentPlayer].updateAfterStay()
 
     def double(self):
         self._players[self._currentPlayer].updateAfterDouble(self._deck.pop())
@@ -130,9 +150,24 @@ class Match(object):
         print(match)
         #Now we should do the dealer's part and the results. Off to sleep!
 
+import unittest
+class TestMatch(unittest.TestCase):
+    def setup(self):
+        pass
+
+    def test_match1(self):
+
+        deck = Deck(listOfCards=[C('K','H'), C('Q','H'),C('5','D'), C('5','S'),C('3','H'),C('3','S')])
+        player = NormalPlayer(money=10)
+        dealer = Dealer(standOn17=True,soft17=False)
+        match = Match(players=[player],dealer=dealer,deck=deck)
+        self.assertEqual(player.hand(), Hand([C('3','S'),C('3','H')]))
+        self.assertEqual(dealer.hand(), Hand([C('5','S'),C('J','D')]))
+        match.hit()
+        self.assertEqual(player.hand(), Hand([C('3','S'),C('3','H'),C('J','D')]))
+        self.assertEqual(dealer.hand(), Hand([C('5','S'),C('J','D'),C('Q','H')]))
 
 if __name__ == "__main__":
-    match = Match()
-    match.play()
+    unittest.main()
 
 

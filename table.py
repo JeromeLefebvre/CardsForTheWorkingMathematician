@@ -73,6 +73,9 @@ class BlackJackTable(cmd.Cmd):
         "Fix the number of decks be used: deck 6"
         self.math.newDecks(*parse(arg))
 
+    def killMatch(self):
+        self.match == None
+
     def do_changeDefault(self,arg):
         "Change the default amount for a bet: changeDefault 3 10"
         if parse(arg)[0] >= parse(arg)[1]:

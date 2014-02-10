@@ -54,11 +54,11 @@ class NormalPlayer(Player):
     '''This class corresponds to normal players in the table'''
     def __init__(self, hand=None, money=0, name = "Player"):
         Player.__init__(self, hand, money, name)
-        self._issplit=False
 
     def startMatch(self,cards):
         ''' startMatch(list of cards) -> None -- receive a hand of 2 cards at the begining of a match'''
-        self._hand=Hand(cards)
+        self._hand=Hand(cards, player=self)
+        return self._hand
 
     def canBet(self,bet):
         '''canBet() -> bool -- Checks whether the player has enough to bet'''
@@ -70,7 +70,7 @@ class NormalPlayer(Player):
 
     def isSplit(self):
         '''Check whether the player has split.'''
-        return self._issplit
+        return len(self.hand) == 2
 
     def extraChips(self,dollar):
         ''' extraChips(int) -> None -- Receive dollar worth of money'''
@@ -142,7 +142,8 @@ class Dealer(Player):
             self._hand=Hand(cards[0])
             self._holecard=cards[1]
         else:
-            self._hand=Hand(cards)
+            self._hand=Hand(cards, self)
+            return self._hand
 
     def flipHoleCard(self):
         '''Adds the holecard to the hand'''
