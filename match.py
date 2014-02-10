@@ -64,6 +64,7 @@ class Match(object):
 
     def dealerBust(self):
         ''' dealerBust() -> None -- if the dealer bust, every remeaning hands wins'''
+
     def startRound(self):
         for player in self._players:
             cardsToPass = [self._deck.pop(), self._deck.pop()]
@@ -144,7 +145,6 @@ class Match(object):
             except:
                 print("Invalid input! Try again")
                 print()
-
         print("Done with players!")
         print()
         print(match)
@@ -156,7 +156,6 @@ class TestMatch(unittest.TestCase):
         pass
 
     def test_match1(self):
-
         deck = Deck(listOfCards=[C('K','H'), C('Q','H'),C('5','D'), C('5','S'),C('3','H'),C('3','S')])
         player = NormalPlayer(money=10)
         dealer = Dealer(standOn17=True,soft17=False)

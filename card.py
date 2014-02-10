@@ -38,8 +38,7 @@ class Card(object):
             self._suit = randint(0,3)
         else:
             if isinstance(suit, int):
-                # raises an AssertionError if not within the accepted range
-                assert( 0 <= suit <= 3)
+                assert( 0 <= suit <= 3) # Not within the valid range
                 self._suit = suit
             elif isinstance(suit, str):
                 assert( suit in [ key for key in Card._SUITS_REVERSE ] )
@@ -65,34 +64,18 @@ class Card(object):
 
     def _compare(self, other, method, withsuits= False):
         try:
-            if withsuits:
-                return method(self.rank(), other.rank()) and method(self.suit(), other.suit())
-            else:
-                return method(self.rank(), other.rank())
+            return method(self.rank(), other.rank())
         except AttributeError:
-            pass
-        typeOther = type(other).split("'")[1] + "()"
-        typeSelf = type(self).split("'")[1] + "()"
-        raise TypeError("unorderable types:" + typeOther + " " + typeSelf)
+            raise AttributeError("Need to compare against an other card")
 
     def __eq__(self, other):
-        # Must compare against a card
-        if not isinstance(other,Card):
-            return False
-        # We use withsuits since we want actual equality
-        return self._compare(other, lambda x,y: x == y, withsuits=True)
+        assert(isinstance(other,Card)) # Must compare against a card
+        return self._compare(other, lambda x,y: x == y, withsuits=False)
 
     def __ne__(self,other):
         if not isinstance(other,Card):
             return True
-        # != is more complicated, since we want to return True if either the rank or the suit differs
-        withsuits=True
-        method = lambda x,y: x != y
-        if withsuits:
-            return method(self.rank(), other.rank()) or method(self.suit(), other.suit())
-        else:
-            return method(self.rank(), other.rank())
-        return method(self.rank(), other.rank())
+        return self.rank() != other.rank() or self.suit() != other.suit()
 
     def __gt__(self,other):
         if isinstance(other, Card):
@@ -103,12 +86,7 @@ class Card(object):
             raise TypeError("Need to compare against a int or Card")
 
     def __ge__(self,other):
-        if isinstance(other, Card):
-            return self._compare(other, lambda x,y: x >= y)
-        elif isinstance(other, int):
-            return self >= Card(other)
-        else:
-            raise TypeError("Need to compare against a int or Card")        
+        return not (self < other)      
 
     def __lt__(self,other):
         if isinstance(other, Card):
@@ -119,12 +97,7 @@ class Card(object):
             raise TypeError("Need to compare against a int or Card")    
 
     def __le__(self,other):
-        if isinstance(other, Card):
-            return self._compare(other, lambda x,y: x <= y)
-        elif isinstance(other, int):
-            return self <= Card(other)
-        else:
-            raise TypeError("Need to compare against a int or Card")        
+        return not (self > other )    
 
     def __str__(self):
         return str(self._RANKS_SHORT[self.rank()]) + str(self._SUITS_ICON[self.suit()])
@@ -150,9 +123,6 @@ class Card(object):
 
 import unittest
 class TestHand(unittest.TestCase):
-    def setup(self):
-        pass
-
     def test_sort(self):
         Q = Card('Q')
         J = Card('J')
@@ -183,6 +153,7 @@ class TestHand(unittest.TestCase):
         two = Card('2')
         # One compare with Ace = 0, one with Ace = 11
         self.assertEqual( sorted( [A,two], key= lambda x: Card.cardCompare(x,withsuits=True)), [A,two] )
+        self.assertEqual( sorted( [A,two], key= lambda x: Card.cardCompare(x,withsuits=False)), [A,two] )
         self.assertEqual( sorted( [A,two], key= aceWorthElven), [two,A] )
 
     def test_compare(self):
@@ -191,16 +162,25 @@ class TestHand(unittest.TestCase):
         self.assertTrue( Card('5') < 6)
         self.assertTrue( Card('5') <= 6)
         self.assertFalse( Card('5') >= 6)
+        self.assertRaises(TypeError, lambda x: Card('5') < x, 'aa')
+        self.assertRaises(TypeError, lambda x: Card('5') > x, 'aa')
         self.assertRaises( TypeError,  lambda x,y: x<= y, (Card('5'),'not a card') )
+        self.assertRaises(AttributeError, lambda input: Card('K')._compare(lambda x,y: x < y, input), [])
+
 
     def test_equality(self):
         self.assertEqual( Card('K','H') , Card('K','H'))
         self.assertTrue( Card() != 5 )
+        self.assertRaises(AssertionError, lambda input: Card() == input, 5)
         self.assertTrue( Card('K','H') != Card('K','S'))
 
     def test_creation(self):
         # Verify that I can't create a Card made of Junk
         self.assertRaises( ValueError, Card, [])
+        self.assertRaises( AssertionError, lambda s: Card(rank='K',suit=s), 'Pink')
+        self.assertRaises( AssertionError, lambda s: Card(rank='K',suit=s), 5)
+        self.assertEqual( Card(rank='K',suit=3), Card(rank='K',suit='C'))
+        self.assertRaises( ValueError, lambda s: Card(rank='K',suit=s), [])
 
     def test_choice(self):
         # verify random creation
@@ -209,11 +189,13 @@ class TestHand(unittest.TestCase):
 
     def test_classMethod(self):
         self.assertEqual(Card.suits_name(2),'Diamonds')
+        self.assertEqual(Card.ranks_name(0),'Ace')
 
     def test_blackjack(self):
-        self.assertEqual( Card('Q').blackjackValue(), 10)
-        self.assertEqual( Card('A').blackjackValue(), 1)
-        self.assertEqual( Card('A').blackjackValue(True), 11)
+        self.assertEqual(Card('Q').blackjackValue(), 10)
+        self.assertEqual(Card('A').blackjackValue(), 1)
+        self.assertEqual(Card('A').blackjackValue(True), 11)
+        self.assertTrue(Card('A').isAce())
 
     def test_repr(self):
         K = Card('K', 'H')
