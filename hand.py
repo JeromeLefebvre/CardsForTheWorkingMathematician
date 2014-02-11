@@ -10,22 +10,26 @@ class Hand(object):
         self.player = player
 
     def sort(self):
-        self._cards = sorted( self._cards, key= lambda x: Card.cardCompare(x,withsuits=True))
+        '''sort() -> None -- Sorts the cards in the hand in place'''
+        self._cards = sorted(self._cards, key= lambda x: Card.cardCompare(x,withsuits=True))
+
+    def sorted(self):
+        '''sorted() -> Hand -- Returns the cards sorted by rank and suits'''
+        return sorted(self._cards, key= lambda x: Card.cardCompare(x,withsuits=True))
 
     def receive(self,newCard):
         ''' receive(Card) -> None -- add a single card to the current hand '''
         assert(isinstance(newCard,Card))
         self._cards.append(newCard)
 
-    def displayCards(self):
-        ''' Prints the content of the hand '''
-        for card in self._cards:
-            print(card)
-
     def hit(self, newCard):
         ''' hit(Card) -> None -- add a single card to the current hand '''
         assert(isinstance(newCard,Card))
         self._cards.append(newCard)
+
+    def cards(self):
+        ''' A getter for the cards'''
+        return self._cards
 
     def isBusted(self):
         ''' isBusted() -> bool -- returns if the hand has a busted hand value '''
@@ -68,6 +72,7 @@ class Hand(object):
     def compare(cls,playerHand,dealerHand):
         ''' compare(hand,hand) -> int -- class method that compares two hands, 
         returns 0 if the hands are a tie, -1 if dealer has a stronger hand, 1 if player has a stronger hand'''
+        assert(isinstance(playerHand, Hand) and isinstance(dealerHand, Hand))
         if playerHand.bestValue() > dealerHand.bestValue():
             return 1
         elif playerHand.bestValue() < dealerHand.bestValue():
@@ -86,56 +91,40 @@ class Hand(object):
     def __str__(self):
         return ''.join(str(card) + ' ' for card in self._cards).rstrip(' ')# + "Busted\n" if self.isBusted() else "" + "BlackJack\n" if self.isBlackJack() else "" + "Pair\n" if self.isPair() else ""
 
-    def _compare(self, other, method):
-        ''' _compare(Hand, function) -> bool -- compares two hands of blackjack'''
-        try:
-            maxself = max(self.value())
-            maxother = max(other.value())
-            # if we have a blackjack: ace + king/queen/jack/10 is counted as 22
-            if len(self._cards) == 2 and maxself == 21:
-                maxself = 22
-            if len(other._cards) == 2 and maxother == 21:
-                maxother = 22
-            return method(maxself, maxother)
-        except AttributeError:
-            pass
-
     def __eq__(self, other):
-        # Must compare against a Hand
+        # Equality means that the two hands contain the same cards
         if not isinstance(other,Hand):
             return False
-        # We use withsuits since we want actual equality
-        return self._compare(other, lambda x,y: x == y)
+        return self.sorted() == other.sorted()
 
     def __ne__(self,other):
         if not isinstance(other,Hand):
             return True
-        return self._compare(other, lambda x,y: x != y)
+        return not self == other 
 
     def __gt__(self,other):
-        return self._compare(other, lambda x,y: x > y)
+        return Hand.compare(self,other) == 1
 
     def __ge__(self,other):
-        return self._compare(other, lambda x,y: x >= y)
+        return Hand.compare(self,other) >= 0
 
     def __lt__(self,other):
-        return self._compare(other, lambda x,y: x < y)
+        return Hand.compare(self,other) < 0
 
     def __le__(self,other):
-        return self._compare(other, lambda x,y: x <= y)
+        return Hand.compare(self,other) <= 0
 
 import unittest
 class TestHand(unittest.TestCase):
-    def setup(self):
-        pass
-
     def test_handValue(self):
         playerHand = Hand([Card('K')])
         self.assertEqual(playerHand.value(),[10])
         playerHand.receive(Card('Q'))
         self.assertEqual(playerHand.value(),[20])
-        playerHand.receive(Card('A'))
+        playerHand.hit(Card('A'))
         self.assertEqual(playerHand.value(),[21])
+        playerHand.sort()
+        self.assertEqual(playerHand.cards(),[Card('A'), Card('Q'), Card('K')])
 
         playerHand = Hand([Card('A'),Card('A')])
         self.assertEqual(playerHand.value(),[2,12])
@@ -143,22 +132,24 @@ class TestHand(unittest.TestCase):
         playerHand = Hand([Card('K')])
         playerHand.receive(Card('A'))
         self.assertEqual(playerHand.value(),[11,21])
+        self.assertTrue(playerHand != 'cat')
+        self.assertFalse(playerHand == 'cat')
 
-    def test_compare(self):
-        playerHand = Hand([Card('K')])
-        dealerHand = Hand([Card('K')])
+    def test_basicCompare(self):
+        playerHand = Hand([Card('K','H')])
+        dealerHand = Hand([Card('K','H')])
         self.assertTrue(playerHand ==  dealerHand)
         playerHand.receive(Card('A'))
         dealerHand = Hand(Card('9'))
+        self.assertTrue(playerHand !=  dealerHand)
         self.assertTrue(playerHand >  dealerHand)
+        self.assertTrue(playerHand >=  dealerHand)
+        self.assertTrue(dealerHand < playerHand)
+        self.assertTrue(dealerHand <= playerHand)
         dealerHand = Hand(Card('2'))
         # winning base on the blackjack rule
         self.assertTrue(playerHand.isBlackJack())
         self.assertTrue(playerHand >  dealerHand)
-
-        playerHand = Hand([Card('K')])
-        dealerHand = Hand([Card('Q')])
-        self.assertTrue(playerHand ==  dealerHand)
 
     def test_handStates(self):
         hand = Hand([Card('K'),Card('K')])
@@ -203,6 +194,10 @@ class TestHand(unittest.TestCase):
         playerHand = Hand([Card('Q'),Card('A')])
         dealerHand = Hand([Card('10'),Card('A')])
         self.assertEqual( Hand.compare(playerHand,dealerHand), 0) 
+
+        playerHand = Hand([Card('Q'),Card('A')])
+        dealerHand = Hand([Card('8'),Card('A'),Card('2')])
+        self.assertEqual( Hand.compare(playerHand,dealerHand), 1) 
 
     def test_repr(self):
         playerHand = Hand([Card('Q'),Card('A')])
