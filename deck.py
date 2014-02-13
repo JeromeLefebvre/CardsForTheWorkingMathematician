@@ -1,13 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:        deck.py
-# Purpose:     The deck class for a card game
-#
-# Author:      Mario, Jerome
-#
-# Created:     05/02/2014
-# Copyright:   (c) marioga 2014
-#-------------------------------------------------------------------------------
-
 from random import shuffle
 
 from card import Card
@@ -71,7 +61,7 @@ class TestHand(unittest.TestCase):
 
     def test_fromList(self):
         dealerDeck = Deck(listOfCards=[Card('K','H')])
-        self.assertEqual(dealerDeck.pop(), Card('K','H'))   
+        self.assertEqual(dealerDeck.pop(), Card('K','H'))
 
     def test_errorRaising(self):
         self.assertRaises(ValueError, Deck, 'a few')
@@ -84,12 +74,12 @@ class TestHand(unittest.TestCase):
         dealerDeck = Deck(2)
         dealerDeck.shuffle()
         self.assertEqual(eval(repr(dealerDeck)), dealerDeck)
-        self.assertRaises(AssertionError, lambda input:dealerDeck == input, Card('K','H'))        
+        self.assertRaises(AssertionError, lambda input:dealerDeck == input, Card('K','H'))
 
     def test_str(self):
         # A somewhat a rediculous test
         deck = Deck(listOfCards=[Card(rank='Jack',suit='Hearts'), Card(rank='Ace',suit='Diamonds'), Card(rank='5',suit='Spades'), Card(rank='3',suit='Spades'), Card(rank='8',suit='Hearts'), Card(rank='Queen',suit='Hearts'), Card(rank='6',suit='Spades'), Card(rank='2',suit='Spades'), Card(rank='Queen',suit='Spades'), Card(rank='4',suit='Diamonds'), Card(rank='10',suit='Clubs'), Card(rank='King',suit='Diamonds'), Card(rank='6',suit='Spades'), Card(rank='5',suit='Hearts'), Card(rank='9',suit='Diamonds'), Card(rank='King',suit='Clubs'), Card(rank='10',suit='Hearts'), Card(rank='7',suit='Diamonds'), Card(rank='9',suit='Clubs'), Card(rank='King',suit='Diamonds'), Card(rank='10',suit='Diamonds'), Card(rank='Queen',suit='Clubs'), Card(rank='8',suit='Clubs'), Card(rank='King',suit='Spades'), Card(rank='4',suit='Spades'), Card(rank='10',suit='Diamonds'), Card(rank='7',suit='Clubs'), Card(rank='6',suit='Clubs'), Card(rank='Jack',suit='Diamonds'), Card(rank='2',suit='Clubs'), Card(rank='4',suit='Hearts'), Card(rank='3',suit='Diamonds'), Card(rank='9',suit='Hearts'), Card(rank='5',suit='Clubs'), Card(rank='Ace',suit='Spades'), Card(rank='9',suit='Spades'), Card(rank='5',suit='Diamonds'), Card(rank='Jack',suit='Spades'), Card(rank='7',suit='Spades'), Card(rank='7',suit='Spades'), Card(rank='10',suit='Clubs'), Card(rank='Jack',suit='Clubs'), Card(rank='6',suit='Diamonds'), Card(rank='4',suit='Clubs'), Card(rank='3',suit='Diamonds'), Card(rank='6',suit='Hearts'), Card(rank='Queen',suit='Diamonds'), Card(rank='3',suit='Hearts'), Card(rank='7',suit='Hearts'), Card(rank='6',suit='Diamonds'), Card(rank='4',suit='Hearts'), Card(rank='8',suit='Spades'), Card(rank='4',suit='Diamonds'), Card(rank='9',suit='Spades'), Card(rank='Ace',suit='Clubs'), Card(rank='10',suit='Spades'), Card(rank='8',suit='Clubs'), Card(rank='8',suit='Diamonds'), Card(rank='9',suit='Clubs'), Card(rank='Ace',suit='Clubs'), Card(rank='5',suit='Hearts'), Card(rank='Ace',suit='Diamonds'), Card(rank='9',suit='Diamonds'), Card(rank='10',suit='Hearts'), Card(rank='3',suit='Spades'), Card(rank='8',suit='Hearts'), Card(rank='2',suit='Hearts'), Card(rank='7',suit='Diamonds'), Card(rank='Jack',suit='Hearts'), Card(rank='5',suit='Clubs'), Card(rank='8',suit='Spades'), Card(rank='5',suit='Spades'), Card(rank='Ace',suit='Spades'), Card(rank='Jack',suit='Diamonds'), Card(rank='2',suit='Diamonds'), Card(rank='Queen',suit='Clubs'), Card(rank='4',suit='Spades'), Card(rank='2',suit='Diamonds'), Card(rank='2',suit='Spades'), Card(rank='Ace',suit='Hearts'), Card(rank='Jack',suit='Clubs'), Card(rank='King',suit='Hearts'), Card(rank='Ace',suit='Hearts'), Card(rank='10',suit='Spades'), Card(rank='6',suit='Clubs'), Card(rank='8',suit='Diamonds'), Card(rank='7',suit='Clubs'), Card(rank='Queen',suit='Spades'), Card(rank='4',suit='Clubs'), Card(rank='3',suit='Clubs'), Card(rank='2',suit='Hearts'), Card(rank='King',suit='Spades'), Card(rank='5',suit='Diamonds'), Card(rank='Jack',suit='Spades'), Card(rank='2',suit='Clubs'), Card(rank='King',suit='Clubs'), Card(rank='Queen',suit='Hearts'), Card(rank='7',suit='Hearts'), Card(rank='3',suit='Clubs'), Card(rank='3',suit='Hearts'), Card(rank='9',suit='Hearts'), Card(rank='King',suit='Hearts'), Card(rank='6',suit='Hearts')])
-        self.assertEqual(str(deck), "J♥A♦5♠3♠8♥Q♥6♠2♠Q♠4♦10♣K♦6♠5♥9♦K♣10♥7♦9♣K♦10♦Q♣8♣K♠4♠10♦7♣6♣J♦2♣4♥3♦9♥5♣A♠9♠5♦J♠7♠7♠10♣J♣6♦4♣3♦6♥Q♦3♥7♥6♦4♥8♠\n4♦9♠A♣10♠8♣8♦9♣A♣5♥A♦9♦10♥3♠8♥2♥7♦J♥5♣8♠5♠A♠J♦2♦Q♣4♠2♦2♠A♥J♣K♥A♥10♠6♣8♦7♣Q♠4♣3♣2♥K♠5♦J♠2♣K♣Q♥7♥3♣3♥9♥K♥6♥")
+        self.assertEqual(str(deck), "Jâ™¥Aâ™¦5â™ 3â™ 8â™¥Qâ™¥6â™ 2â™ Qâ™ 4â™¦10â™£Kâ™¦6â™ 5â™¥9â™¦Kâ™£10â™¥7â™¦9â™£Kâ™¦10â™¦Qâ™£8â™£Kâ™ 4â™ 10â™¦7â™£6â™£Jâ™¦2â™£4â™¥3â™¦9â™¥5â™£Aâ™ 9â™ 5â™¦Jâ™ 7â™ 7â™ 10â™£Jâ™£6â™¦4â™£3â™¦6â™¥Qâ™¦3â™¥7â™¥6â™¦4â™¥8â™ \n4â™¦9â™ Aâ™£10â™ 8â™£8â™¦9â™£Aâ™£5â™¥Aâ™¦9â™¦10â™¥3â™ 8â™¥2â™¥7â™¦Jâ™¥5â™£8â™ 5â™ Aâ™ Jâ™¦2â™¦Qâ™£4â™ 2â™¦2â™ Aâ™¥Jâ™£Kâ™¥Aâ™¥10â™ 6â™£8â™¦7â™£Qâ™ 4â™£3â™£2â™¥Kâ™ 5â™¦Jâ™ 2â™£Kâ™£Qâ™¥7â™¥3â™£3â™¥9â™¥Kâ™¥6â™¥")
 
 if __name__ == '__main__':
     unittest.main()

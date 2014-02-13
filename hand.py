@@ -1,35 +1,31 @@
 from card import Card
 
 class Hand(object):
-    def __init__(self,cards=[],player=None,firstHand=True):
+    def __init__(self, cards=[], player=None, resplittable=True,isasplit=False):
         if isinstance(cards,Card):
-            self._cards = [cards]
-        elif isinstance(cards,list):
-            self._cards = cards
-        self._firstHand = firstHand
+            self.cards = [cards]
+        elif isinstance(cards,list) and all(isinstance(card,Card) for card in cards):
+            self.cards = cards
+        self.resplittable = resplittable
+        self.isasplit = isasplit
         self.player = player
+        if player != None:
+            self.bet=self.player.bet
+        else:
+            self.bet=0 # For consistency
 
     def sort(self):
         '''sort() -> None -- Sorts the cards in the hand in place'''
-        self._cards = sorted(self._cards, key= lambda x: Card.cardCompare(x,withsuits=True))
+        self.cards = sorted(self.cards, key = lambda x: Card.cardCompare(x,withsuits=True))
 
     def sorted(self):
         '''sorted() -> Hand -- Returns the cards sorted by rank and suits'''
-        return sorted(self._cards, key= lambda x: Card.cardCompare(x,withsuits=True))
-
-    def receive(self,newCard):
-        ''' receive(Card) -> None -- add a single card to the current hand '''
-        assert(isinstance(newCard,Card))
-        self._cards.append(newCard)
+        return sorted(self.cards, key = lambda x: Card.cardCompare(x,withsuits=True))
 
     def hit(self, newCard):
         ''' hit(Card) -> None -- add a single card to the current hand '''
         assert(isinstance(newCard,Card))
-        self._cards.append(newCard)
-
-    def cards(self):
-        ''' A getter for the cards'''
-        return self._cards
+        self.cards.append(newCard)
 
     def isBusted(self):
         ''' isBusted() -> bool -- returns if the hand has a busted hand value '''
@@ -37,19 +33,22 @@ class Hand(object):
 
     def isBlackJack(self):
         ''' isBlackJack() -> bool -- returns whether the hand is a BlackJack, which means the first two cards add to soft 21'''
-        return len(self._cards) == 2 and max(self.value())==21 and self._firstHand
+        return len(self.cards) == 2 and self.bestValue() == 21 and not(self.isasplit)
 
-    def isPair(self):
-        ''' isPair() -> bool -- returns whether the hand contains of exactly one pair and is on the first hand'''
-        return len(self._cards) == 2 and len(set(card.rank() for card in self._cards)) == 1 and self._firstHand
+    def isSplittable(self):
+        ''' isSplittable() -> bool -- returns whether the hand contains of exactly one pair and is on the first hand'''
+        if self.player==None:
+            return len(self.cards) == 2 and len(set(card.rank for card in self.cards)) == 1 and self.resplittable
+        else:
+            return len(self.cards) == 2 and len(set(card.rank for card in self.cards)) == 1 and self.resplittable and self.player.canBet(self.bet);
 
     def value(self):
         ''' value() -> list -- returns a list of one or two possible score for the hand '''
         total = 0
-        for card in self._cards:
-            total += card.blackjackValue()
+        for card in self.cards:
+            total += card.value()
         # if there is one at least one ace, we get two possible values for the score if it won't go over 21
-        if any(card.isAce() for card in self._cards) and total <= 11:
+        if any(card.isAce() for card in self.cards) and total <= 11:
             total = [total, total+10]
         elif total<=21:
             total = [total]
@@ -63,14 +62,14 @@ class Hand(object):
 
     def split(self):
         ''' split() -> hand -- returns a new hand containing half of the pair that is currently in the hand '''
-        assert(self.isPair())
-        self._firstHand = False
-        newHand = Hand(self._cards.pop(),firstHand=False)
+        assert(self.isSplittable())
+        self.isasplit=True
+        newHand = Hand(self.cards.pop(),self.player,self.resplittable,True)
         return newHand
 
     @classmethod
     def compare(cls,playerHand,dealerHand):
-        ''' compare(hand,hand) -> int -- class method that compares two hands, 
+        ''' compare(hand,hand) -> int -- class method that compares two hands,
         returns 0 if the hands are a tie, -1 if dealer has a stronger hand, 1 if player has a stronger hand'''
         assert(isinstance(playerHand, Hand) and isinstance(dealerHand, Hand))
         if playerHand.bestValue() > dealerHand.bestValue():
@@ -86,10 +85,10 @@ class Hand(object):
                 return -1
 
     def __repr__(self):
-        return "Hand(cards=%r)" % self._cards
+        return "Hand(cards=%r)" % self.cards
 
     def __str__(self):
-        return ''.join(str(card) + ' ' for card in self._cards).rstrip(' ')# + "Busted\n" if self.isBusted() else "" + "BlackJack\n" if self.isBlackJack() else "" + "Pair\n" if self.isPair() else ""
+        return ''.join(str(card) + ' ' for card in self.cards).rstrip(' ') # + "Busted\n" if self.isBusted() else "" + "BlackJack\n" if self.isBlackJack() else "" + "Pair\n" if self.isPair() else ""
 
     def __eq__(self, other):
         # Equality means that the two hands contain the same cards
@@ -100,10 +99,10 @@ class Hand(object):
     def __ne__(self,other):
         if not isinstance(other,Hand):
             return True
-        return not self == other 
+        return not self == other
 
     def __gt__(self,other):
-        return Hand.compare(self,other) == 1
+        return Hand.compare(self,other) > 0
 
     def __ge__(self,other):
         return Hand.compare(self,other) >= 0
@@ -119,18 +118,18 @@ class TestHand(unittest.TestCase):
     def test_handValue(self):
         playerHand = Hand([Card('K')])
         self.assertEqual(playerHand.value(),[10])
-        playerHand.receive(Card('Q'))
+        playerHand.hit(Card('Q'))
         self.assertEqual(playerHand.value(),[20])
         playerHand.hit(Card('A'))
         self.assertEqual(playerHand.value(),[21])
         playerHand.sort()
-        self.assertEqual(playerHand.cards(),[Card('A'), Card('Q'), Card('K')])
+        self.assertEqual(playerHand.cards,[Card('A'), Card('Q'), Card('K')])
 
         playerHand = Hand([Card('A'),Card('A')])
         self.assertEqual(playerHand.value(),[2,12])
-        
+
         playerHand = Hand([Card('K')])
-        playerHand.receive(Card('A'))
+        playerHand.hit(Card('A'))
         self.assertEqual(playerHand.value(),[11,21])
         self.assertTrue(playerHand != 'cat')
         self.assertFalse(playerHand == 'cat')
@@ -139,7 +138,7 @@ class TestHand(unittest.TestCase):
         playerHand = Hand([Card('K','H')])
         dealerHand = Hand([Card('K','H')])
         self.assertTrue(playerHand ==  dealerHand)
-        playerHand.receive(Card('A'))
+        playerHand.hit(Card('A'))
         dealerHand = Hand(Card('9'))
         self.assertTrue(playerHand !=  dealerHand)
         self.assertTrue(playerHand >  dealerHand)
@@ -153,9 +152,9 @@ class TestHand(unittest.TestCase):
 
     def test_handStates(self):
         hand = Hand([Card('K'),Card('K')])
-        self.assertTrue(hand.isPair())
-        hand.receive(Card('K'))
-        self.assertFalse(hand.isPair())
+        self.assertTrue(hand.isSplittable())
+        hand.hit(Card('K'))
+        self.assertFalse(hand.isSplittable())
         self.assertTrue(hand.isBusted())
         hand = Hand([Card('A'),Card('J'),Card('K'), Card('A')])
         self.assertTrue(hand.isBusted())
@@ -163,15 +162,15 @@ class TestHand(unittest.TestCase):
     def test_slit(self):
         hand = Hand([Card('K','H'),Card('K','D')])
         newHand = hand.split()
-        self.assertEqual(newHand._cards, [Card('K','D')])
-        self.assertEqual(hand._cards, [Card('K','H')])
+        self.assertEqual(newHand.cards, [Card('K','D')])
+        self.assertEqual(hand.cards, [Card('K','H')])
 
         hand = Hand([Card('Q','H'),Card('K','D')])
         self.assertRaises(AssertionError, hand.split)
 
         hand = Hand([Card('J','H'),Card('J','D')])
         newHand = hand.split()
-        newHand.receive(Card('A'))
+        newHand.hit(Card('A'))
         self.assertFalse(newHand.isBlackJack())
 
     def test_compare(self):
@@ -193,11 +192,11 @@ class TestHand(unittest.TestCase):
 
         playerHand = Hand([Card('Q'),Card('A')])
         dealerHand = Hand([Card('10'),Card('A')])
-        self.assertEqual( Hand.compare(playerHand,dealerHand), 0) 
+        self.assertEqual( Hand.compare(playerHand,dealerHand), 0)
 
         playerHand = Hand([Card('Q'),Card('A')])
         dealerHand = Hand([Card('8'),Card('A'),Card('2')])
-        self.assertEqual( Hand.compare(playerHand,dealerHand), 1) 
+        self.assertEqual( Hand.compare(playerHand,dealerHand), 1)
 
     def test_repr(self):
         playerHand = Hand([Card('Q'),Card('A')])

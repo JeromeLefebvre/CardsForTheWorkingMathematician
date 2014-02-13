@@ -1,198 +1,98 @@
-#-------------------------------------------------------------------------------
-# Name:        player.py
-# Purpose:
-#
-# Author:      marioga
-#
-# Created:     05/02/2014
-# Copyright:   (c) marioga 2014
-#-------------------------------------------------------------------------------
-
 from card import Card
 from hand import Hand
 
 class Player(object):
     def __init__(self, money=0, name="Player"):
-        assert(isinstance(money,int)) # money needs to be an integer 
-        self._money = money
+        assert(isinstance(money,int)) # money needs to be an integer
+        self.money = money
         assert(isinstance(name,str)) # name needs to be a string
         self.name = name
 
-    def hand(self):
-        ''' hand() -> Hand -- Getter for hand'''
-        return self._hands
-
-    def money(self):
-        ''' money() -> int -- Getter for _money'''
-        return self._money
-
     def __str__(self):
         '''Nice representation for player'''
-        return "Name: %s, Cards: %s" % (self.name(), self.hand())
-
-    def hit(self,card):
-        ''' Here we update a player class after a hit'''
-        if isinstance(card,Card):
-            self._hand.receive(card)
-
-    def updateAfterStay(self):
-        ''' Here we update a player class after a stay; so far nothing happens'''
-        pass
-
-    def cleanHand(self):
-        ''' cleanHand -> None -- Clears a player's hand, called after a match is over'''
-        self._hand = None
+        return "Name: %s, Money: %s" % (self.name(), self.money())
 
 class NormalPlayer(Player):
     '''This class corresponds to normal players in the table'''
-    def __init__(self, money=0, name="John"):
+    def __init__(self, money=0, name="John", bet=0):
         Player.__init__(self, money, name)
-
-    def startMatch(self,cards):
-        ''' startMatch(list of cards) -> None -- receive a hand of 2 cards at the begining of a match'''
-        self._hand=Hand(cards, player=self)
-        return self._hand
+        self.bet=bet
 
     def canBet(self,bet):
         '''canBet() -> bool -- Checks whether the player has enough to bet'''
-        return self.money()>=bet
+        return self.money>=self.bet
 
-    def collectBet(self,bet):
-        ''' collectBet(int) -> None -- A loss or win is recorded in the player's money (a negative number is a loss)'''
-        self._money += bet
+    def betMoney(self):
+        '''Subtract bet from the player's money'''
+        self.money-=self.bet
 
-    def isSplit(self):
-        '''Check whether the player has split.'''
-        return len(self.hand) == 2
+    def collectMoney(self, amount):
+        ''' collectBet(int) -> None -- A win is recorded in the player's money'''
+        assert(amount>=0)
+        self.money += amount
 
-    def extraChips(self,dollar):
+    def extraChips(self, dollar):
         ''' extraChips(int) -> None -- Receive dollar worth of money'''
         assert(dollar >= 0)
         self._money += dollar
-
-    def updateAfterDouble(self,card,bet=0):
-        '''Updates player's instance after doubling and makes sure player has enough'''
-        try:
-            if self.hasEnoughToBet(int(bet)):
-                self._money-=bet
-                self._hand.receive(card)
-            else:
-                print("Not enough money to double")
-        except ValueError:
-            print ("Bet is not an integer")
-
-    def updateAfterSplit(self,bet=0):
-        '''Updates player after he split his pair. Creates an alternative hand'''
-        try:
-            if self.hasEnoughToBet(int(bet)):
-                self._money-=bet
-                self._secondhand = self._hand.split()
-                self._issplit=True
-            else:
-                print("Not enough money to double")
-        except ValueError:
-            print ("Bet is not an integer")
-
-    def updateAfterSecondHit(self):
-        pass
-
-    def updateAfterBet(self,bet=0):
-        '''Updates player's money after betting and makes sure player has enough'''
-        try:
-            if self.hasEnoughToBet(int(bet)):
-                self.money-=bet
-            else:
-                print("Not enough money to bet")
-        except ValueError:
-            print ("Bet is not an integer")
 
 
 class Dealer(Player):
     '''This class corresponds to the dealer. We assign no money to it and interpret
     its money as wins or losses for the house'''
-    def __init__(self,name="Malkovich", standOn17=False, soft17=False):
+    def __init__(self,name="Malkovich"):
         Player.__init__(self, 0, name)
-        assert(standOn17 ^ soft17) # Dealer can only follow one rule
-        self._standOn17 = standOn17
-        self._soft17 = soft17
 
-    def startMatch(self,cards,withholecard=False):
-        '''Deals initial cards to the dealer'''
-        if withholecard:
-            self._hand=Hand(cards[0])
-            self._holecard=cards[1]
-        else:
-            self._hand=Hand(cards, self)
-            return self._hand
 
-    def flipHoleCard(self):
-        '''Adds the holecard to the hand'''
-        self._hand.receive(self._holecard)
-
-    def shouldHit(self):
-        ''' shoudHit() -> bool -- returns if the dealer wants to hit or not base on the choice of a 17 rule'''
-        if self._standOn17:
-            return self._hand.bestValue() < 17
-        else: # soft17
-            if self._hand.bestValue() == 17 and len(self._hand.value()) == 2:
-                return True
-            elif self._hand.bestValue() >= 17:  # Hard 17 or soft >= 18
-                return False
-            else:
-                return True
+    def updateHouseMoney(self,amount):
+        self.money+=amount
 
 import unittest
 class TestPlayer(unittest.TestCase):
     def test_basicPlayer(self):
         pass
 
-    def test_betting(self):
-        john = NormalPlayer(money=10)
-        self.assertTrue(john.canBet(5))
-        john.collectBet(-5)
-        self.assertFalse(john.canBet(6)) # only has 5 dollars left
-        john.collectBet(20)
-        self.assertTrue(john.canBet(25))
-
     '''
-    "Dealer stands on all 17s": In this case, the dealer must continue to take cards ("hit") 
+    "Dealer stands on all 17s": In this case, the dealer must continue to take cards ("hit")
     until his total is 17 or greater. An Ace in the dealer's hand is always counted as 11 if
-     possible without the dealer going over 21. For example, (Ace,8) would be 19 and the 
-     dealer would stop drawing cards ("stand"). Also, (Ace,6) is 17 and again the dealer will stand. 
-     (Ace,5) is only 16, so the dealer would hit. He will continue to draw cards until the hand's value 
-     is 17 or more. For example, (Ace,5,7) is only 13 so he hits again. (Ace,5,7,5) makes 18 
+     possible without the dealer going over 21. For example, (Ace,8) would be 19 and the
+     dealer would stop drawing cards ("stand"). Also, (Ace,6) is 17 and again the dealer will stand.
+     (Ace,5) is only 16, so the dealer would hit. He will continue to draw cards until the hand's value
+     is 17 or more. For example, (Ace,5,7) is only 13 so he hits again. (Ace,5,7,5) makes 18
      so he would stop ("stand") at that point.
 
-    Dealer hits soft 17": Some casinos use this rule variation instead. This rule is identical except 
-    for what happens when the dealer has a soft total of 17. Hands such as (Ace,6), (Ace,5,Ace), and 
+    Dealer hits soft 17": Some casinos use this rule variation instead. This rule is identical except
+    for what happens when the dealer has a soft total of 17. Hands such as (Ace,6), (Ace,5,Ace), and
     (Ace, 2, 4) are all examples of soft 17. The dealer hits these hands, and stands on soft 18 or higher,
      or hard 17 or higher. When this rule is used, the house advantage against the players is slightly increased.
     '''
-    def test_dealer(self):
-        aDealer = Dealer(standOn17=True)
-        aDealer.startMatch([Card('K'), Card('7')]) # hit 17
-        self.assertFalse(aDealer.shouldHit())
 
-        aDealer = Dealer(standOn17=True)
-        aDealer.startMatch([Card('K'), Card('6')]) # Below 17
-        self.assertTrue(aDealer.shouldHit())
-
-        aDealer = Dealer(standOn17=True)
-        aDealer.startMatch([Card('A'), Card('6')]) # shoft 17
-        self.assertFalse(aDealer.shouldHit())     
-
-
-        aDealer = Dealer(soft17=True)
-        aDealer.startMatch([Card('A'), Card('6')]) # soft 17
-        self.assertTrue(aDealer.shouldHit())
-
-        aDealer = Dealer(soft17=True)
-        aDealer.startMatch([Card('K'), Card('7')]) # hard 17
-        self.assertFalse(aDealer.shouldHit())
-
-        aDealer = Dealer(soft17=True)
-        aDealer.startMatch([Card('K'), Card('6'), Card('2')]) # hard 18
-        self.assertFalse(aDealer.shouldHit())   
+''' TO BE DEALT WITH FOR A DIFFERENT TESTING UNIT'''
+##    def test_dealer(self):
+##        aDealer = Dealer(standOn17=True)
+##        aDealer.startMatch([Card('K'), Card('7')]) # hit 17
+##        self.assertFalse(aDealer.shouldHit())
+##
+##        aDealer = Dealer(standOn17=True)
+##        aDealer.startMatch([Card('K'), Card('6')]) # Below 17
+##        self.assertTrue(aDealer.shouldHit())
+##
+##        aDealer = Dealer(standOn17=True)
+##        aDealer.startMatch([Card('A'), Card('6')]) # shoft 17
+##        self.assertFalse(aDealer.shouldHit())
+##
+##
+##        aDealer = Dealer(soft17=True)
+##        aDealer.startMatch([Card('A'), Card('6')]) # soft 17
+##        self.assertTrue(aDealer.shouldHit())
+##
+##        aDealer = Dealer(soft17=True)
+##        aDealer.startMatch([Card('K'), Card('7')]) # hard 17
+##        self.assertFalse(aDealer.shouldHit())
+##
+##        aDealer = Dealer(soft17=True)
+##        aDealer.startMatch([Card('K'), Card('6'), Card('2')]) # hard 18
+##        self.assertFalse(aDealer.shouldHit())
 
 if __name__ == '__main__':
     unittest.main()
