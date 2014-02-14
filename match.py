@@ -1,17 +1,17 @@
 from deck import Deck
-from player import NormalPlayer,Dealer
+from player import NormalPlayer, Dealer
 from hand import Hand
 from card import Card as C
 
 # TODO:
 '''
 Players are paid according to their bets
-A table is a collection of players, a dealer and rules and runMatch
+A game is a collection of players, a dealer and rules and runMatch
 Bet calculations called when gameOver : Need to read rules
 '''
 class Match(object):
 
-    def __init__(self,players,dealer,table=None,deck=None):
+    def __init__(self,players,dealer,game=None,deck=None):
 
         if isinstance(deck,Deck):
             self.deck=deck
@@ -20,7 +20,7 @@ class Match(object):
             self.deck.shuffle()
         assert(isinstance(players,list) and all(isinstance(player,NormalPlayer) for player in players))
         self.players = players
-        self.table = table
+        self.game = game
         assert(isinstance(dealer,Dealer))
         self.dealer = dealer
         self.currenthand = 0
@@ -32,7 +32,12 @@ class Match(object):
             cardstopass = [self.deck.pop(), self.deck.pop()]
             self.hands.append(Hand(cardstopass,player)) # Assuming resplittable true
         self.dealerhand = Hand([self.deck.pop(), self.deck.pop()], self.dealer)
-				# If blackjack, pay right away, maybe
+        if self.dealerhand.isBlackJack():
+            self.dealerHasBlackJack()
+
+    def dealerHasBlackJack(self):
+        self.gameOver()
+
 
     def __str__(self):
         return str(self.hands)+"\n"+str(self.dealerhand)
@@ -58,9 +63,6 @@ class Match(object):
 
     def moveToNextHand(self):
         self.currenthand = self.currenthand + 1
-        if self.table != None: # Update the interface
-            #self._table.update()
-            pass
         if self.currenthand == len(self.hands):
         	  # dealer's turn
         	  self.dealerTurn()
@@ -75,8 +77,8 @@ class Match(object):
         self.gameOver()
 
     def dealerShouldHit(self):
-        ''' shoudHit() -> bool -- returns if the dealer wants to hit or not base on the choice of a 17 rule'''
-        if self.table.standOn17:
+        ''' shoudHit() -> bool -- returns if the dealer wants to hit or not based on the choice of a 17 rule'''
+        if self.game.rules['standonsoft17']:
             return self.dealerhand.bestValue() < 17
         else: # soft17
             if self.dealerhand.bestValue() == 17 and len(self.dealerhand.value()) == 2:

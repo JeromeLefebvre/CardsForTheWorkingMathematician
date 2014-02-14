@@ -56,9 +56,9 @@ class Hand(object):
     def isSplittable(self):
         ''' isSplittable() -> bool -- returns whether the hand contains of exactly one pair and is on the first hand'''
         if self.player==None:
-            return len(self.cards) == 2 and len(set(card.rank for card in self.cards)) == 1 and self.resplittable
+            return len(self.cards) == 2 and len(set(card.value() for card in self.cards)) == 1 and self.resplittable
         else:
-            return len(self.cards) == 2 and len(set(card.rank for card in self.cards)) == 1 and self.resplittable and self.player.canBet(self.bet)
+            return len(self.cards) == 2 and len(set(card.value() for card in self.cards)) == 1 and self.resplittable and self.player.canBet(self.bet)
 
     def isDoublable(self):
         ''' isDoublable() -> bool -- returns whether the hand contains of exactly one pair and is on the first hand'''
@@ -184,7 +184,7 @@ class TestHand(unittest.TestCase):
         self.assertEqual(hand.cards, [Card('K','H')])
 
         hand = Hand([Card('Q','H'),Card('K','D')])
-        self.assertRaises(AssertionError, hand.split)
+        self.assertTrue(hand.isSplittable())
 
         hand = Hand([Card('J','H'),Card('J','D')])
         newHand = hand.split()
