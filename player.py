@@ -42,7 +42,7 @@ class Dealer(Player):
     its money as wins or losses for the house'''
     def __init__(self,name="Malkovich"):
         Player.__init__(self, 0, name)
-
+        self.bet=0 # For consistency with hand. Never used.
 
     def updateHouseMoney(self,amount):
         self.money+=amount

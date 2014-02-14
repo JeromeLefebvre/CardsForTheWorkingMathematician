@@ -1,7 +1,7 @@
 from card import Card
 
 class Hand(object):
-    def __init__(self, cards=[], player=None, resplittable=True,isasplit=False):
+    def __init__(self, cards=[], player=None, resplittable=True, isasplit=False):
         if isinstance(cards,Card):
             self.cards = [cards]
         elif isinstance(cards,list) and all(isinstance(card,Card) for card in cards):
@@ -27,6 +27,24 @@ class Hand(object):
         assert(isinstance(newCard,Card))
         self.cards.append(newCard)
 
+    def double(self, newCard):
+        ''' double(Card) -> None -- add a single card to the current hand and collect money from player'''
+        assert(isinstance(newCard,Card))
+        self.cards.append(newCard)
+        self.bet*=2
+        if self.player != None:
+            self.player.betMoney()
+
+
+    def split(self):
+        ''' split() -> hand -- returns a new hand containing half of the pair that is currently in the hand '''
+        assert(self.isSplittable())
+        self.isasplit=True
+        newHand = Hand(self.cards.pop(),self.player,self.resplittable,True)
+        if self.player != None:
+            self.player.betMoney()
+        return newHand
+
     def isBusted(self):
         ''' isBusted() -> bool -- returns if the hand has a busted hand value '''
         return self.value() == [-1]
@@ -40,7 +58,14 @@ class Hand(object):
         if self.player==None:
             return len(self.cards) == 2 and len(set(card.rank for card in self.cards)) == 1 and self.resplittable
         else:
-            return len(self.cards) == 2 and len(set(card.rank for card in self.cards)) == 1 and self.resplittable and self.player.canBet(self.bet);
+            return len(self.cards) == 2 and len(set(card.rank for card in self.cards)) == 1 and self.resplittable and self.player.canBet(self.bet)
+
+    def isDoublable(self):
+        ''' isDoublable() -> bool -- returns whether the hand contains of exactly one pair and is on the first hand'''
+        if self.player!=None:
+            return self.player.canBet(self.bet)
+        else:
+            return True
 
     def value(self):
         ''' value() -> list -- returns a list of one or two possible score for the hand '''
@@ -59,13 +84,6 @@ class Hand(object):
     def bestValue(self):
         ''' bestValue() -> bool -- returns the best value for the hand '''
         return max(self.value())
-
-    def split(self):
-        ''' split() -> hand -- returns a new hand containing half of the pair that is currently in the hand '''
-        assert(self.isSplittable())
-        self.isasplit=True
-        newHand = Hand(self.cards.pop(),self.player,self.resplittable,True)
-        return newHand
 
     @classmethod
     def compare(cls,playerHand,dealerHand):
