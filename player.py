@@ -36,6 +36,9 @@ class NormalPlayer(Player):
         assert(dollar >= 0)
         self._money += dollar
 
+    def offerInsurance(self):
+        ''' Should be implemented by some kind of appeal to the user interface, for now let's say the player always accept the insurance to it's maximum allowed money '''
+        return self.bet//2
 
 class Dealer(Player):
     '''This class corresponds to the dealer. We assign no money to it and interpret
