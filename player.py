@@ -40,6 +40,10 @@ class NormalPlayer(Player):
         ''' Should be implemented by some kind of appeal to the user interface, for now let's say the player always accept the insurance to it's maximum allowed money '''
         return self.bet//2
 
+    def offerSurrender(self):
+        ''' Should be implemented by some kind of appeal to the user interface, for now the player never surrenders'''
+        return False
+
 class Dealer(Player):
     '''This class corresponds to the dealer. We assign no money to it and interpret
     its money as wins or losses for the house'''

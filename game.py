@@ -1,5 +1,5 @@
 class Game(object):
-    RULES = {'standonsoft17':False,'bjack_pays':(6,5)}
+    RULES = {'standonsoft17':False,'bjack_pays':(6,5), 'surrender':False}
 
     def __init__(self, rules = RULES, withplayer=False):
         self.players=[]

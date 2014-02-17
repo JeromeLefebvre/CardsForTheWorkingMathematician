@@ -24,19 +24,26 @@ class Match(object):
         self.currenthand = 0
         self.hands = []
         self.game = game
+        self.surrendered = {}
         self.startRound()
         self.insurance = {player:0 for player in self.players}
 
     def startRound(self):
         for player in self.players:
             cardstopass = [self.deck.pop(), self.deck.pop()]
-            self.hands.append(Hand(cardstopass,player)) # Assuming resplittable true
+            newHand = Hand(cardstopass,player)
+            self.hands.append(newHand) # Assuming resplittable true
         self.dealerhand = Hand([self.deck.pop(), self.deck.pop()], self.dealer)
         if self.dealerhand.cards[0].isAce(): # assuming 0 is the hole hand
             for player in self.players:
                 self.insurance[player] = player.offerInsurance()
         if self.dealerhand.isBlackJack():
             self.dealerHasBlackJack()
+        if self.game.rules["surrender"]:
+            for hand in self.hands:
+                if hand.player.offerSurrender():
+                    # The hand should be deleted and the player get his money back
+                    pass
 
     def dealerHasBlackJack(self):
         self.gameOver()
@@ -69,10 +76,7 @@ class Match(object):
               self.dealerTurn()
 
     def dealerTurn(self):
-        # It is the dealer's turn, hit until stand
-        # Then call game over, i.e. giving out bets
-        # Transfer over the rules for should Hit
-        # TODO
+        # TODO: There should be an an appeal to the user interface here to turn over the dealer card.
         while self.dealerShouldHit():
             self.dealerhand.hit(self.deck.pop())
         self.gameOver()
